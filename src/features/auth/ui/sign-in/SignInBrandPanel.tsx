@@ -14,7 +14,7 @@ export function SignInBrandPanel() {
     <aside className="fixed inset-y-0 left-0 hidden w-[41%] min-w-95 max-w-135 flex-col justify-between overflow-hidden bg-panel px-11 py-10 text-panel-fg lg:flex">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_0%,rgba(75,69,209,0.28),transparent_65%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_0%,rgba(47,111,237,0.35),transparent_65%)]"
       />
 
       {/* Top */}
@@ -22,15 +22,15 @@ export function SignInBrandPanel() {
         <div className="flex items-center gap-2.5">
           <BrandMark size={25} onDark />
 
-          <span className="font-serif text-[20px] font-medium leading-none tracking-[-0.015em]">
-            DrukConnect
+          <span className="text-[19px] font-extrabold leading-none tracking-tight">
+            Bhutanese Marketplace
           </span>
         </div>
       </div>
 
       {/* Main message */}
       <div className="relative">
-        <p className="max-w-[13ch] font-serif text-[34px] font-light leading-[1.18] tracking-[-0.022em]">
+        <p className="max-w-[13ch] text-[34px] font-extrabold leading-[1.12] tracking-[-0.03em]">
           Good to have you back.
         </p>
 

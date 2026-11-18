@@ -55,7 +55,7 @@ function formatLabel(value: string | null | undefined) {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const styles = STATUS_STYLES[status] ?? "bg-gray-100 text-gray-700";
+  const styles = STATUS_STYLES[status] ?? "bg-line/60 text-ink";
 
   return (
     <span
@@ -310,7 +310,7 @@ export default function AdminFeedbackList() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm text-muted">
-            Review feedback submitted by DrukConnect users.
+            Review feedback submitted by Bhutanese Marketplace users.
           </p>
 
           <p className="mt-1 text-sm text-muted">

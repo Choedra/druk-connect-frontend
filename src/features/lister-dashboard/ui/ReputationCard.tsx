@@ -1,55 +1,52 @@
 import Link from "next/link";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight, BadgeCheck, Star } from "lucide-react";
 
-export function ReputationCard() {
+type ReputationCardProps = {
+  averageRating?: number;
+  reviewCount?: number;
+  vouchCount?: number;
+  loading?: boolean;
+};
+
+/** The lister's trust signals, from the lister dashboard data. */
+export function ReputationCard({ averageRating, reviewCount, vouchCount, loading }: ReputationCardProps) {
+  const show = (value: number | undefined, digits = 0) =>
+    loading || value === undefined ? "—" : value.toFixed(digits);
+
   return (
-    <section className="border border-line bg-surface p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.1em] text-faint">
-            Your reputation
-          </p>
+    <section className="flex h-full flex-col rounded-2xl border border-line bg-white p-6">
+      <h2 className="text-xl font-bold tracking-[-0.015em] text-ink">Your reputation</h2>
+      <p className="mt-1 text-sm text-muted">What buyers see when they choose a provider.</p>
 
-          <h2 className="mt-2 font-serif text-xl font-medium tracking-tight text-ink">
-            Build trust with the community.
-          </h2>
+      <dl className="mt-6 grid grid-cols-3 divide-x divide-line rounded-2xl border border-line py-4">
+        <div className="flex flex-col-reverse items-center px-2 text-center">
+          <dt className="mt-1 text-xs text-muted">Rating</dt>
+          <dd className="flex items-center gap-1 text-xl font-extrabold text-ink">
+            <Star className="h-4 w-4 fill-[#f5a524] text-[#f5a524]" aria-hidden="true" />
+            {averageRating ? show(averageRating, 1) : "—"}
+          </dd>
         </div>
+        <div className="flex flex-col-reverse items-center px-2 text-center">
+          <dt className="mt-1 text-xs text-muted">Reviews</dt>
+          <dd className="text-xl font-extrabold text-ink">{show(reviewCount)}</dd>
+        </div>
+        <div className="flex flex-col-reverse items-center px-2 text-center">
+          <dt className="mt-1 text-xs text-muted">Vouches</dt>
+          <dd className="text-xl font-extrabold text-ink">{show(vouchCount)}</dd>
+        </div>
+      </dl>
 
-        <div className="flex items-center gap-1 text-sm font-semibold text-ink">
-          <Star className="h-4 w-4 fill-current" />
-          4.8
-        </div>
-      </div>
-
-      <div className="mt-6 grid grid-cols-2 gap-4 border-y border-line py-5">
-        <div>
-          <p className="text-xl font-semibold text-ink">12</p>
-          <p className="mt-1 text-xs text-muted">Reviews</p>
-        </div>
-
-        <div>
-          <p className="text-xl font-semibold text-ink">2</p>
-          <p className="mt-1 text-xs text-muted">Vouches</p>
-        </div>
-      </div>
-
-      <div className="mt-5">
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-medium text-ink">Profile completeness</span>
-          <span className="text-muted">80%</span>
-        </div>
-
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-brand-tint">
-          <div className="h-full w-[80%] bg-brand" />
-        </div>
+      <div className="mt-5 flex items-start gap-3 rounded-2xl bg-pine-soft p-4 text-sm text-pine">
+        <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+        <p>More vouches and reviews help buyers trust you.</p>
       </div>
 
       <Link
-        href="/dashboard/profile"
-        className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-dark"
+        href="/lister-dashboard/vouches"
+        className="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-sky hover:underline hover:underline-offset-4"
       >
-        Complete your profile
-        <ArrowRight className="h-4 w-4" />
+        Ask for vouches
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
     </section>
   );

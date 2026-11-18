@@ -1,5 +1,4 @@
 "use client";
-import { UserAvatar } from "@/src/shared/ui/UserAvatar";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -84,7 +83,7 @@ export default function VouchRecoveryPage() {
     <main className="min-h-screen bg-background px-6 py-12 text-ink">
       <div className="mx-auto max-w-2xl space-y-6">
         <Link href="/auth/login" className="text-brand underline">Back to sign in</Link>
-        <h1 className="font-serif text-3xl">Restore your access</h1>
+        <h1 className="text-3xl font-extrabold tracking-[-0.03em]">Restore your access</h1>
         <p className="text-muted">Request another vouch from a registered Buyer or invite someone by email.</p>
         {error && <p role="alert" className="rounded-lg bg-danger-tint p-4 text-danger">{error}</p>}
         {notice && <p role="status" className="rounded-lg bg-brand-tint p-4">{notice}</p>}
@@ -138,7 +137,7 @@ export default function VouchRecoveryPage() {
               {query.length >= 2 && !buyers.isFetching && buyers.data?.buyers?.length === 0 && <p>No registered Buyers found. Try another search or invite someone below.</p>}
               {query.length >= 2 && buyers.data?.buyers?.map((buyer) => (
                 <div key={buyer.userId} className="flex flex-wrap items-center justify-between gap-3 border-t border-line-strong py-3">
-                  <UserAvatar name={`${buyer.firstName} ${buyer.lastName}`} imageUrl={buyer.profileImageUrl} size={36} /><div><p>{buyer.firstName} {buyer.lastName}</p><p className="text-sm text-muted">{buyer.email}</p></div>
+                  <div><p>{buyer.firstName} {buyer.lastName}</p><p className="text-sm text-muted">{buyer.email}</p></div>
                   <Button disabled={request.isPending || buyer.alreadyVouched || buyer.requestPending || pendingBuyerIds.includes(buyer.userId)} onClick={() => { resetFeedback(); request.mutate(buyer.userId); }}>
                     {buyer.alreadyVouched ? "Already Vouched" : buyer.requestPending || pendingBuyerIds.includes(buyer.userId) ? "Request Pending" : request.isPending && request.variables === buyer.userId ? "Sending…" : "Request Vouch"}
                   </Button>

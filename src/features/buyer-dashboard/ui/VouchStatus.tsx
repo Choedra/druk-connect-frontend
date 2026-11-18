@@ -20,7 +20,7 @@ export default function VouchStatus({
 
   if (status === "ACTIVE") {
     return (
-      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">
+      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-pine-soft px-2.5 py-1 text-xs font-medium text-pine">
         <CheckCircle2 className="h-3.5 w-3.5" />
         Active
       </span>
@@ -28,7 +28,7 @@ export default function VouchStatus({
   }
 
   return (
-    <span className="inline-flex shrink-0 items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+    <span className="inline-flex shrink-0 items-center rounded-full bg-line/60 px-2.5 py-1 text-xs font-medium text-muted">
       {formatStatus(status)}
     </span>
   );

@@ -15,6 +15,7 @@ import AdminVouchWithdrawalTable from "./ui/AdminVouchWithdrawalTable";
 import PendingWithdrawalsEmpty from "./ui/PendingWithdrawalsEmpty";
 import PendingWithdrawalsError from "./ui/PendingWithdrawalsError";
 import PendingWithdrawalsSkeleton from "./ui/PendingWithdrawalsSkeleton";
+import { PageHeader } from "@/src/shared/dashboard/PageHeader";
 
 const PAGE_SIZE = 10;
 
@@ -66,7 +67,10 @@ export default function AdminVouchWithdrawalsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader />
+      <PageHeader
+        title="Vouch Withdrawals"
+        description="Review vouch withdrawal requests submitted by buyers."
+      />
 
       <PendingWithdrawalsSummary total={data?.totalElements ?? 0} />
 
@@ -99,30 +103,16 @@ export default function AdminVouchWithdrawalsPage() {
   );
 }
 
-function PageHeader() {
-  return (
-    <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-[#1C2541]">
-        Vouch Withdrawals
-      </h1>
-
-      <p className="mt-1 text-sm text-gray-500">
-        Review vouch withdrawal requests submitted by buyers.
-      </p>
-    </div>
-  );
-}
-
 type PendingWithdrawalsSummaryProps = {
   total: number;
 };
 
 function PendingWithdrawalsSummary({ total }: PendingWithdrawalsSummaryProps) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5">
-      <p className="text-sm text-gray-500">Pending withdrawals</p>
+    <div className="rounded-2xl border border-line bg-white p-5">
+      <p className="text-sm text-muted">Pending withdrawals</p>
 
-      <p className="mt-1 text-2xl font-semibold text-[#1C2541]">{total}</p>
+      <p className="mt-1 text-2xl font-semibold text-ink">{total}</p>
     </div>
   );
 }
@@ -145,8 +135,8 @@ function Pagination({
   onNext,
 }: PaginationProps) {
   return (
-    <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-      <p className="text-sm text-gray-500">
+    <div className="flex items-center justify-between border-t border-line pt-4">
+      <p className="text-sm text-muted">
         Page {currentPage} of {totalPages}
       </p>
 
@@ -155,7 +145,7 @@ function Pagination({
           type="button"
           onClick={onPrevious}
           disabled={!hasPrevious}
-          className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-50"
         >
           Previous
         </button>
@@ -164,7 +154,7 @@ function Pagination({
           type="button"
           onClick={onNext}
           disabled={!hasNext}
-          className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-50"
         >
           Next
         </button>

@@ -1,131 +1,69 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 
-function LogoMark() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 28 28"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M14 2L25 22H3L14 2Z"
-        className="stroke-brand"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
+import { LISTING_CATEGORIES, LISTING_CITIES } from "@/src/features/listing/constants/categories";
+import { Logo } from "./Logo";
 
-      <path d="M14 10L19 19H9L14 10Z" className="fill-brand" />
-    </svg>
-  );
-}
-
-const FOOTER_LINKS = [
+const COLUMNS = [
   {
-    title: "Explore",
-    links: [
-      {
-        href: "/services",
-        label: "Browse services",
-      },
-      {
-        href: "/auth/signup",
-        label: "Post a service",
-      },
-    ],
+    title: "Services",
+    links: LISTING_CATEGORIES.slice(0, 4).map((c) => ({
+      label: c,
+      href: `/services?category=${encodeURIComponent(c)}`,
+    })),
   },
   {
-    title: "Community",
-    links: [
-      {
-        href: "/how-it-works",
-        label: "How it works",
-      },
-      {
-        href: "/safety",
-        label: "Safety tips",
-      },
-    ],
+    title: "Cities",
+    links: LISTING_CITIES.slice(0, 4).map((c) => ({ label: c, href: `/services?city=${c}` })),
   },
   {
-    title: "Support",
+    title: "Bhutanese Marketplace",
     links: [
-      {
-        href: "/contact",
-        label: "Contact us",
-      },
-      {
-        href: "/report",
-        label: "Report a listing",
-      },
+      { label: "List your service", href: "/auth/signup?role=LISTER" },
+      { label: "Sign up to vouch", href: "/auth/signup?role=BUYER" },
+      { label: "Sign in", href: "/auth/login" },
     ],
   },
 ];
 
 export function Footer() {
   return (
-    <footer className="border-t border-line bg-background">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-        {/* Main footer */}
-        <div className="grid gap-12 py-14 sm:py-16 lg:grid-cols-[1.2fr_1fr] lg:gap-20 lg:py-20">
-          {/* Brand */}
-          <div className="max-w-sm">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2.5 font-serif text-xl font-semibold tracking-tight text-ink"
-            >
-              <LogoMark />
-              DrukConnect
-            </Link>
-
-            <p className="mt-5 max-w-xs text-sm leading-6 text-muted">
-              A trusted marketplace connecting the Bhutanese community across
-              Australia.
-            </p>
-
-            <Link
-              href="/services"
-              className="group mt-7 inline-flex items-center gap-2 text-sm font-semibold text-ink transition-colors duration-200 hover:text-brand"
-            >
-              Explore the community
-              <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </Link>
-          </div>
-
-          {/* Navigation */}
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 sm:gap-8">
-            {FOOTER_LINKS.map((section) => (
-              <div key={section.title}>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
-                  {section.title}
-                </p>
-
-                <div className="mt-5 flex flex-col gap-3.5">
-                  {section.links.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="group inline-flex w-fit items-center gap-1.5 text-sm text-muted transition-colors duration-200 hover:text-brand"
-                    >
-                      {link.label}
-
-                      <ArrowUpRight className="h-3 w-3 opacity-0 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+    <footer className="bg-panel font-landing text-white">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 lg:grid-cols-12">
+        <div className="lg:col-span-4">
+          <Logo tone="light" />
+          <p className="mt-5 max-w-xs leading-relaxed text-white/60">
+            Trusted services from the Bhutanese community across Australia.
+          </p>
         </div>
 
-        {/* Bottom */}
-        <div className="flex flex-col gap-4 border-t border-line py-6 text-xs text-faint sm:flex-row sm:items-center sm:justify-between">
-          <p>Made for the Bhutanese community in Australia.</p>
-
-          <p>© {new Date().getFullYear()} DrukConnect. All rights reserved.</p>
+        <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-7 lg:col-start-6">
+          {COLUMNS.map((col) => (
+            <div key={col.title}>
+              <h3 className="text-sm font-semibold text-white/50">{col.title}</h3>
+              <ul className="mt-4 flex flex-col gap-3">
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <Link href={l.href} className="text-white/80 hover:text-white">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-6 text-sm text-white/45 sm:flex-row sm:justify-between sm:px-8">
+          <p>© {new Date().getFullYear()} Bhutanese Marketplace</p>
+          <p className="flex gap-6">
+            <Link href="/privacy" className="hover:text-white">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-white">
+              Terms
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

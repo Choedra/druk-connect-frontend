@@ -14,11 +14,11 @@ export default function PendingWithdrawalsError({
           <AlertCircle className="h-6 w-6 text-red-600" />
         </div>
 
-        <h2 className="text-lg font-semibold text-[#1C2541]">
+        <h2 className="text-lg font-semibold text-ink">
           Unable to load pending withdrawals
         </h2>
 
-        <p className="mt-2 text-sm text-gray-500">{message}</p>
+        <p className="mt-2 text-sm text-muted">{message}</p>
       </div>
     </div>
   );

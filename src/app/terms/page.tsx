@@ -15,9 +15,9 @@ const SUPPORT_EMAIL = "[SUPPORT EMAIL]";
 const GOVERNING_STATE = "[STATE/TERRITORY]";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions — DrukConnect",
+  title: "Terms & Conditions — Bhutanese Marketplace",
   description:
-    "The terms that govern browsing, listing, contacting, reviewing and vouching on DrukConnect.",
+    "The terms that govern browsing, listing, contacting, reviewing and vouching on Bhutanese Marketplace.",
 };
 
 /* ------------------------------------------------------------------ */
@@ -85,12 +85,12 @@ const SECTIONS: Section[] = [
     title: "Who we are and what this document covers",
     paragraphs: [
       <>
-        DrukConnect (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;the
+        Bhutanese Marketplace (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;the
         Platform&rdquo;) is an online listing service that lets members of the
         Bhutanese-Australian community post services they offer
         (&ldquo;Listings&rdquo;) and connect with other members who are looking
         for those services. These Terms &amp; Conditions (&ldquo;Terms&rdquo;)
-        govern your use of DrukConnect, whether you are browsing, listing a
+        govern your use of Bhutanese Marketplace, whether you are browsing, listing a
         service, contacting another member, leaving a review, or vouching for
         someone.
       </>,
@@ -103,10 +103,10 @@ const SECTIONS: Section[] = [
   },
   {
     id: "what-we-are",
-    title: "What DrukConnect is — and is not",
+    title: "What Bhutanese Marketplace is — and is not",
     paragraphs: [
       <>
-        DrukConnect is a{" "}
+        Bhutanese Marketplace is a{" "}
         <strong className="font-semibold text-ink">
           listing and discovery platform only
         </strong>
@@ -117,8 +117,8 @@ const SECTIONS: Section[] = [
     ],
     bullets: [
       "We do not verify the accuracy of any Listing, the identity claims of any member beyond phone verification, or the qualifications, licensing, insurance, or fitness of any provider.",
-      "Community “vouching” and star ratings are member-generated trust signals, not a guarantee or endorsement by DrukConnect.",
-      "Arrangements, payments, and the performance of any service are solely between the members involved. DrukConnect is not responsible for the outcome of any transaction or interaction.",
+      "Community “vouching” and star ratings are member-generated trust signals, not a guarantee or endorsement by Bhutanese Marketplace.",
+      "Arrangements, payments, and the performance of any service are solely between the members involved. Bhutanese Marketplace is not responsible for the outcome of any transaction or interaction.",
     ],
   },
   {
@@ -135,7 +135,7 @@ const SECTIONS: Section[] = [
     id: "community-guidelines",
     title: "Community guidelines",
     paragraphs: [
-      "By using DrukConnect you agree to the following, which form part of these Terms:",
+      "By using Bhutanese Marketplace you agree to the following, which form part of these Terms:",
     ],
     bullets: [
       "Never send money, deposits, or gift cards to another member before meeting in person or receiving the service.",
@@ -180,7 +180,7 @@ const SECTIONS: Section[] = [
     id: "prohibited-conduct",
     title: "Prohibited conduct",
     paragraphs: [
-      "In addition to the community guidelines above, you must not use DrukConnect to:",
+      "In addition to the community guidelines above, you must not use Bhutanese Marketplace to:",
     ],
     bullets: [
       "Offer or solicit anything illegal under Australian law;",
@@ -204,7 +204,7 @@ const SECTIONS: Section[] = [
       "To the maximum extent permitted by Australian law, including the Australian Consumer Law:",
     ],
     bullets: [
-      "DrukConnect is provided on an “as is” and “as available” basis, without warranties of any kind regarding the accuracy, safety, legality, or quality of any Listing or member.",
+      "Bhutanese Marketplace is provided on an “as is” and “as available” basis, without warranties of any kind regarding the accuracy, safety, legality, or quality of any Listing or member.",
       "We are not liable for any loss, damage, injury, or dispute arising from a transaction, interaction, or arrangement between members, including but not limited to vehicle rentals, food safety, or personal injury.",
       "Nothing in these Terms excludes, restricts, or modifies any consumer guarantee, right, or remedy under the Australian Consumer Law that cannot lawfully be excluded.",
     ],
@@ -216,7 +216,7 @@ const SECTIONS: Section[] = [
     id: "indemnity",
     title: "Indemnity",
     paragraphs: [
-      "You agree to indemnify DrukConnect against any claim, loss, or damage arising from your breach of these Terms, your Listing, or your conduct on the Platform, to the extent permitted by law.",
+      "You agree to indemnify Bhutanese Marketplace against any claim, loss, or damage arising from your breach of these Terms, your Listing, or your conduct on the Platform, to the extent permitted by law.",
     ],
   },
   {
@@ -226,7 +226,7 @@ const SECTIONS: Section[] = [
       <>
         Our {privacyLink} explains what personal information we collect
         (including your phone number, location, and any content you post) and
-        how we use, store, and protect it. By using DrukConnect you agree to
+        how we use, store, and protect it. By using Bhutanese Marketplace you agree to
         that Privacy Policy.
       </>,
     ],

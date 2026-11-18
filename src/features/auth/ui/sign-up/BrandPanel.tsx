@@ -27,10 +27,10 @@ const STATEMENTS = [
 ] as const;
 
 const MEMBERS = [
-  { name: "Pema Choden", color: "#4B45D1" },
-  { name: "Karma Wangchuk", color: "#6D5BD0" },
-  { name: "Sonam Lhamo", color: "#3E5BB8" },
-  { name: "Ugyen Tshering", color: "#7B4FB5" },
+  { name: "Pema Choden", color: "#2F6FED" },
+  { name: "Karma Wangchuk", color: "#1E6B4F" },
+  { name: "Sonam Lhamo", color: "#1F56C7" },
+  { name: "Ugyen Tshering", color: "#0E7C86" },
 ];
 
 interface BrandPanelProps {
@@ -64,7 +64,7 @@ export function BrandPanel({
     <aside className="fixed inset-y-0 left-0 hidden w-[41%] min-w-95 max-w-135 flex-col justify-between overflow-hidden bg-panel px-11 py-10 text-panel-fg lg:flex">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_0%,rgba(75,69,209,0.28),transparent_65%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_0%,rgba(47,111,237,0.35),transparent_65%)]"
       />
 
       {/* Top */}
@@ -73,8 +73,8 @@ export function BrandPanel({
           <span className="flex items-center gap-2.5">
             <BrandMark size={25} onDark />
 
-            <span className="font-serif text-[20px] font-medium leading-none tracking-[-0.015em]">
-              DrukConnect
+            <span className="text-[19px] font-extrabold leading-none tracking-tight">
+              Bhutanese Marketplace
             </span>
           </span>
         </div>
@@ -86,7 +86,7 @@ export function BrandPanel({
       <div className="relative">
         <p
           key={`statement-${step}-${role}`}
-          className="animate-step max-w-[13ch] font-serif text-[34px] font-light leading-[1.18] tracking-[-0.022em]"
+          className="animate-step max-w-[13ch] text-[34px] font-extrabold leading-[1.12] tracking-[-0.03em]"
         >
           {statement.heading}
         </p>
@@ -256,7 +256,7 @@ function ProfilePreview({
 
       <div className="rounded-2xl border border-panel-line bg-panel-raise p-4">
         <div className="flex items-center gap-3.5">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand font-serif text-[19px] text-white">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand text-[19px] font-extrabold text-white">
             {initialsOf(name) || "DC"}
           </span>
 
@@ -301,7 +301,7 @@ function BuyerFinishPreview() {
 
             <p className="mt-1 text-[12.5px] leading-5 text-panel-muted">
               Review the community guidelines and finish creating your
-              DrukConnect account.
+              Bhutanese Marketplace account.
             </p>
           </div>
         </div>

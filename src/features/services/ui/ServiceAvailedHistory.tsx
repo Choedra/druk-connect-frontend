@@ -1,5 +1,4 @@
 "use client";
-import { UserAvatar } from "@/src/shared/ui/UserAvatar";
 import Link from "next/link";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,6 +7,8 @@ import {
   sendReviewRequest,
 } from "../../reviews/api/reviewRequests";
 import { useAuthStore } from "../../auth/store/authStore";
+import { PageHeader, buttonSecondary } from "@/src/shared/dashboard/PageHeader";
+import { RefreshCw } from "lucide-react";
 
 export function ServiceAvailedHistory() {
   const [page, setPage] = useState(1);
@@ -37,26 +38,27 @@ export function ServiceAvailedHistory() {
   });
   return (
     <section className="space-y-6">
-      <div>
-        <h1 className="font-serif text-3xl font-medium text-ink">
-          Service Availed History
-        </h1>
-        <p className="mt-2 text-sm text-muted">
-          {buyer
+      <PageHeader
+        title="Service Availed History"
+        description={
+          buyer
             ? "Services marked as availed for your account by their providers."
-            : "Services you have marked as availed by Buyers."}
-        </p>
-      </div>
-      <button
-        type="button"
-        disabled={history.isFetching}
-        onClick={() => {
-          void history.refetch();
-        }}
-        className="rounded-md border border-line px-4 py-2 text-sm disabled:opacity-50"
-      >
-        {history.isFetching ? "Refreshing…" : "Refresh history"}
-      </button>
+            : "Services you have marked as availed by Buyers."
+        }
+        actions={
+          <button
+            type="button"
+            disabled={history.isFetching}
+            onClick={() => {
+              void history.refetch();
+            }}
+            className={buttonSecondary}
+          >
+            <RefreshCw className={`h-4 w-4 ${history.isFetching ? "animate-spin" : ""}`} aria-hidden="true" />
+            {history.isFetching ? "Refreshing…" : "Refresh history"}
+          </button>
+        }
+      />
       {invitation.isSuccess && (
         <p role="status" className="rounded-md bg-brand-tint p-4">
           {invitation.data.message} Sent to {invitation.data.buyerName}.

@@ -1,6 +1,5 @@
 "use client";
 
-import { UserAvatar } from "@/src/shared/ui/UserAvatar";
 import type {
   ButtonHTMLAttributes,
   InputHTMLAttributes,
@@ -31,25 +30,14 @@ export function BrandMark({
       aria-hidden="true"
       className="shrink-0"
     >
-      <rect
-        width="24"
-        height="24"
-        rx="7.5"
-        className={onDark ? "fill-panel-fg" : "fill-brand"}
-      />
-
+      {/* Same mark as the public site header */}
       <path
-        d="M5.5 16.4 9.8 9.2l2.7 4.5 1.8-2.8 4.2 5.5H5.5Z"
-        className={onDark ? "fill-panel" : "fill-white"}
+        d="M12 1.7 21.4 18.9H2.6L12 1.7Z"
+        className={onDark ? "stroke-white" : "stroke-brand"}
+        strokeWidth="1.9"
+        strokeLinejoin="round"
       />
-
-      <circle
-        cx="15.9"
-        cy="7.5"
-        r="2"
-        className={onDark ? "fill-brand" : "fill-white"}
-        fillOpacity={onDark ? 1 : 0.6}
-      />
+      <path d="M12 8.6 16.3 16.3H7.7L12 8.6Z" className="fill-brand" />
     </svg>
   );
 }
@@ -78,11 +66,11 @@ export function StepHeading({
 }) {
   return (
     <header className="mb-8">
-      <h1 className="font-serif text-[29px] font-normal leading-[1.14] tracking-[-0.02em] text-ink sm:text-[32px]">
+      <h1 className="text-[28px] font-extrabold leading-[1.12] tracking-[-0.03em] text-ink sm:text-[32px]">
         {title}
       </h1>
 
-      <p className="mt-3 max-w-[44ch] text-[14.5px] leading-6 text-muted">
+      <p className="mt-3 max-w-[44ch] text-[15px] leading-6 text-muted">
         {description}
       </p>
     </header>
@@ -128,7 +116,7 @@ export function FieldError({ children }: { children?: ReactNode }) {
 }
 
 export const inputBase =
-  "w-full rounded-[10px] border bg-surface px-3.5 text-[15px] text-ink outline-none transition placeholder:text-faint/75";
+  "w-full rounded-xl border bg-surface px-4 text-[15px] text-ink outline-none transition placeholder:text-faint/75";
 
 export const inputRest =
   "border-line hover:border-line-strong focus:border-brand focus:ring-[3.5px] focus:ring-brand/15";
@@ -148,7 +136,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         aria-invalid={invalid || undefined}
         className={cn(
           inputBase,
-          "h-11",
+          "h-12",
           invalid ? inputInvalid : inputRest,
           className,
         )}
@@ -177,7 +165,7 @@ export function Button({
 }: ButtonProps) {
   const styles = {
     primary:
-      "bg-brand text-white shadow-[0_1px_2px_rgba(75,69,209,0.3)] hover:bg-brand-dark active:scale-[0.995]",
+      "bg-brand text-white shadow-[0_8px_20px_-10px_rgba(47,111,237,0.7)] hover:bg-brand-dark active:scale-[0.995]",
     secondary:
       "border border-line-strong bg-surface text-ink hover:border-ink/25 hover:bg-background",
     quiet: "text-faint hover:text-ink",
@@ -187,7 +175,7 @@ export function Button({
     <button
       disabled={disabled || loading}
       className={cn(
-        "inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-5 text-[14.5px] font-medium transition disabled:cursor-not-allowed disabled:opacity-55",
+        "inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold transition disabled:cursor-not-allowed disabled:opacity-55",
         fullWidth && "w-full",
         styles,
         className,
@@ -220,14 +208,28 @@ export function initialsOf(name: string) {
 
 export function Avatar({
   name,
-  imageUrl,
   tone = "brand",
   size = 34,
 }: {
   name: string;
-  imageUrl?: string | null;
   tone?: "brand" | "jade" | "ink";
   size?: number;
 }) {
-  return <UserAvatar name={name} imageUrl={imageUrl} size={size} className={tone === "jade" ? "text-jade" : ""} />;
+  const tones = {
+    brand: "bg-brand-tint text-brand",
+    jade: "bg-jade-tint text-jade",
+    ink: "bg-ink/[0.07] text-muted",
+  }[tone];
+
+  return (
+    <span
+      style={{ width: size, height: size, fontSize: size * 0.36 }}
+      className={cn(
+        "grid shrink-0 place-items-center rounded-full font-semibold",
+        tones,
+      )}
+    >
+      {initialsOf(name) || "?"}
+    </span>
+  );
 }

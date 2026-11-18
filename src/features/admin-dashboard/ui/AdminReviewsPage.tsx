@@ -1,11 +1,11 @@
 "use client";
-import { UserAvatar } from "@/src/shared/ui/UserAvatar";
 
 import { useState } from "react";
 import { Check, Clock3, MessageSquare, Star, UserRound, X } from "lucide-react";
 import { AdminReview } from "../../reviews/types/reviews";
 import { useAdminReviews } from "../hooks/useAdminReviews";
 import { useModerateReview } from "../hooks/useModerateReview";
+import { PageHeader } from "@/src/shared/dashboard/PageHeader";
 
 export default function AdminReviewsPage() {
   const [page, setPage] = useState(1);
@@ -59,19 +59,10 @@ export default function AdminReviewsPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <p className="text-sm font-medium text-brand">Moderation</p>
-
-        <h1 className="mt-1 font-serif text-3xl font-medium tracking-tight text-ink">
-          Reviews
-        </h1>
-
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-          Review and moderate feedback submitted by users before it appears
-          publicly on listings.
-        </p>
-      </div>
+      <PageHeader
+        title="Reviews"
+        description="Review and moderate feedback submitted by users before it appears publicly on listings."
+      />
 
       {/* Summary */}
       <div className="grid gap-4 sm:grid-cols-3">
@@ -234,7 +225,7 @@ function ReviewCard({
 
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-ink">
-                <UserAvatar name={review.reviewerName} imageUrl={review.profileImageUrl} size={32} /> {review.reviewerName}
+                {review.reviewerName}
               </p>
 
               <p className="truncate text-xs text-muted">

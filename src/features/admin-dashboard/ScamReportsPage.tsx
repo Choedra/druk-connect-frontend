@@ -14,6 +14,7 @@ import {
 import { usePendingScamReports } from "./hooks/usePendingScamReports";
 import { useModerateScamReport } from "./hooks/useModerateScamReport";
 import type { ScamReport, ScamModerationAction } from "./types/scamReport";
+import { PageHeader, buttonSecondary } from "@/src/shared/dashboard/PageHeader";
 
 function formatDate(value: string) {
   const date = new Date(value);
@@ -99,40 +100,18 @@ export default function ScamReportsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
-      <div className="mx-auto max-w-7xl space-y-8">
-        {/* Page header */}
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-sm text-muted">
-              <ShieldAlert className="h-4 w-4" />
-              Admin / Safety
-            </div>
-
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-ink">
-              Scam reports
-            </h1>
-
-            <p className="mt-2 text-sm text-muted">
-              Review suspicious listings reported by the community.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => refetch()}
-            disabled={isFetching}
-            className="inline-flex items-center justify-center gap-2
-              rounded-lg border border-line bg-surface px-4 py-2.5
-              text-sm font-medium text-ink transition
-              hover:bg-background disabled:opacity-50"
-          >
-            <RefreshCw
-              className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
-            />
-            Refresh reports
-          </button>
-        </header>
+    <div>
+      <div className="space-y-8">
+        <PageHeader
+          title="Scam reports"
+          description="Review suspicious listings reported by the community."
+          actions={
+            <button type="button" onClick={() => refetch()} disabled={isFetching} className={buttonSecondary}>
+              <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} aria-hidden="true" />
+              Refresh reports
+            </button>
+          }
+        />
 
         {/* Moderation success notification */}
         {moderationNotice && (
@@ -575,6 +554,6 @@ export default function ScamReportsPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

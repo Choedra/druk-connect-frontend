@@ -54,16 +54,16 @@ export function ChooseRole({ onSelect }: ChooseRoleProps) {
   return (
     <div className="w-full">
       <div className="mb-10 text-center">
-        <div className="mx-auto mb-5 flex h-11 w-11 items-center justify-center rounded-md bg-brand-tint">
+        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-tint">
           <LogoMark />
         </div>
 
-        <h1 className="font-serif text-3xl font-medium tracking-tight text-ink">
-          Join DrukConnect
+        <h1 className="text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-4xl">
+          Join Bhutanese Marketplace
         </h1>
 
         <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted">
-          Choose how you want to use DrukConnect. You can discover services as a
+          Choose how you want to use Bhutanese Marketplace. You can discover services as a
           buyer or share your own with the community.
         </p>
       </div>
@@ -117,22 +117,22 @@ function RoleCard({
     <button
       type="button"
       onClick={() => onSelect(role)}
-      className="group flex min-h-[260px] flex-col rounded-md border border-line bg-surface p-6 text-left transition-colors duration-200 hover:border-brand-line focus:outline-none focus:ring-2 focus:ring-brand/30"
+      className="group flex min-h-[260px] flex-col rounded-2xl border border-line bg-surface p-6 hover:shadow-[0_18px_40px_-20px_rgba(15,23,42,0.25)] text-left transition-colors duration-200 hover:border-brand-line focus:outline-none focus:ring-2 focus:ring-brand/30"
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="flex h-11 w-11 items-center justify-center rounded-md bg-brand-tint text-brand">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-tint text-brand">
           <Icon className="h-5 w-5" />
         </div>
 
         {badge && (
-          <span className="rounded-md bg-jade-tint px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-jade">
+          <span className="rounded-full bg-jade-tint px-2.5 py-1 text-xs font-semibold text-jade">
             {badge}
           </span>
         )}
       </div>
 
       <div className="mt-7">
-        <h2 className="font-serif text-xl font-medium tracking-tight text-ink">
+        <h2 className="text-xl font-bold tracking-tight text-ink">
           {title}
         </h2>
 

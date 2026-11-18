@@ -5,6 +5,7 @@ import { ImagePlus, X } from "lucide-react";
 
 import { useSubmitFeedbackForm } from "../hooks/useSubmitFeedbackForm";
 import type { FeedbackPerspective, FeedbackType } from "../types/feedback";
+import { useAuthStore } from "@/src/features/auth/store/authStore";
 
 type Props = {
   onClose?: () => void;
@@ -12,7 +13,11 @@ type Props = {
 
 export default function FeedbackForm({ onClose }: Props) {
   const [type, setType] = useState<FeedbackType>("BUG");
-  const [perspective, setPerspective] = useState<FeedbackPerspective>("LISTER");
+  // Default "I am using Bhutanese Marketplace as" to the signed-in account type.
+  const accessType = useAuthStore((state) => state.user?.accessType);
+  const [perspective, setPerspective] = useState<FeedbackPerspective>(
+    accessType === "BUYER" ? "BUYER" : "LISTER",
+  );
   const [message, setMessage] = useState("");
   const [anonymous, setAnonymous] = useState(false);
   const [screenshot, setScreenshot] = useState<File | undefined>();
@@ -72,17 +77,19 @@ export default function FeedbackForm({ onClose }: Props) {
   }
 
   return (
-    <section className="mx-auto w-full max-w-2xl rounded-xl border border-line bg-surface p-6 sm:p-8">
+    <section className="w-full rounded-2xl border border-line bg-white p-6 sm:p-8">
+      {/* The title is only needed when the form opens on its own (as a pop-up). */}
+      {onClose && (
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-brand">
-            DrukConnect
+            Bhutanese Marketplace
           </p>
           <h1 className="mt-2 text-2xl font-semibold text-ink">
             Give feedback
           </h1>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Report a problem or share an idea to help us improve DrukConnect.
+            Report a problem or share an idea to help us improve Bhutanese Marketplace.
           </p>
         </div>
 
@@ -97,6 +104,7 @@ export default function FeedbackForm({ onClose }: Props) {
           </button>
         )}
       </div>
+      )}
 
       {successMessage ? (
         <div
@@ -141,7 +149,7 @@ export default function FeedbackForm({ onClose }: Props) {
               htmlFor="feedback-perspective"
               className="mb-2 block text-sm font-medium text-ink"
             >
-              I am using DrukConnect as
+              I am using Bhutanese Marketplace as
             </label>
             <select
               id="feedback-perspective"

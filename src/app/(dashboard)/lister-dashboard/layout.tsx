@@ -1,5 +1,5 @@
-import { DashboardHeader } from "@/src/features/lister-dashboard/ui/DashboardHeader";
-import { DashboardSidebar } from "@/src/features/lister-dashboard/ui/DashboardSidebar";
+import { RestrictionNavLink } from "@/src/features/lister-dashboard/ui/RestrictionNavLink";
+import { DashboardShell } from "@/src/shared/dashboard/DashboardShell";
 import { ProtectedRoute } from "@/src/shared/routes/ProtectedRoute";
 
 export default function DashboardLayout({
@@ -9,17 +9,9 @@ export default function DashboardLayout({
 }>) {
   return (
     <ProtectedRoute allowedAccessTypes={["LISTER"]}>
-      <div className="min-h-screen bg-background text-ink">
-        <DashboardSidebar />
-
-        <div className="min-h-screen lg:pl-64">
-          <DashboardHeader />
-
-          <main className="px-5 py-8 sm:px-8 lg:px-10">
-            <div className="mx-auto w-full max-w-7xl">{children}</div>
-          </main>
-        </div>
-      </div>
+      <DashboardShell role="lister" sidebarExtra={<RestrictionNavLink />}>
+        {children}
+      </DashboardShell>
     </ProtectedRoute>
   );
 }

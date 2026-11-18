@@ -51,38 +51,38 @@ export default function AdminVouchWithdrawalTable({
 
   return (
     <>
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+      <div className="overflow-hidden rounded-2xl border border-line bg-white">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1100px]">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <tr className="border-b border-line bg-canvas">
+                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted">
                   Buyer
                 </th>
 
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted">
                   Lister
                 </th>
 
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted">
                   Reason
                 </th>
 
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted">
                   Requested
                 </th>
 
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted">
                   Status
                 </th>
 
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-muted">
                   Action
                 </th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-line">
               {requests.map((request) => (
                 <WithdrawalRow
                   key={request.withdrawalRequestId}
@@ -121,14 +121,14 @@ function WithdrawalRow({
   onReview,
 }: WithdrawalRowProps) {
   return (
-    <tr className="transition-colors hover:bg-gray-50">
+    <tr className="transition-colors hover:bg-canvas">
       <td className="px-5 py-4">
         <div>
-          <p className="font-medium text-[#1C2541]">{request.buyerName}</p>
+          <p className="font-medium text-ink">{request.buyerName}</p>
 
-          <p className="mt-1 text-sm text-gray-500">{request.buyerEmail}</p>
+          <p className="mt-1 text-sm text-muted">{request.buyerEmail}</p>
 
-          <p className="mt-0.5 text-sm text-gray-500">
+          <p className="mt-0.5 text-sm text-muted">
             {request.buyerPhoneNumber}
           </p>
         </div>
@@ -136,21 +136,21 @@ function WithdrawalRow({
 
       <td className="px-5 py-4">
         <div>
-          <p className="font-medium text-[#1C2541]">{request.listerName}</p>
+          <p className="font-medium text-ink">{request.listerName}</p>
 
-          <p className="mt-1 text-sm text-gray-500">{request.listerEmail}</p>
+          <p className="mt-1 text-sm text-muted">{request.listerEmail}</p>
 
-          <p className="mt-0.5 text-sm text-gray-500">
+          <p className="mt-0.5 text-sm text-muted">
             {request.listerPhoneNumber}
           </p>
         </div>
       </td>
 
       <td className="max-w-[300px] px-5 py-4">
-        <p className="line-clamp-3 text-sm text-gray-600">{request.reason}</p>
+        <p className="line-clamp-3 text-sm text-muted">{request.reason}</p>
       </td>
 
-      <td className="whitespace-nowrap px-5 py-4 text-sm text-gray-600">
+      <td className="whitespace-nowrap px-5 py-4 text-sm text-muted">
         {formatDate(request.requestedAt)}
       </td>
 
@@ -163,7 +163,7 @@ function WithdrawalRow({
           type="button"
           onClick={onReview}
           disabled={isSubmitting}
-          className="rounded-lg border border-[#7A2E33]/30 px-3 py-2 text-sm font-medium text-[#7A2E33] transition-colors hover:bg-[#7A2E33]/5 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-lg border border-sky/30 px-4 py-2 text-sm font-semibold text-sky transition-colors hover:bg-sky-soft disabled:cursor-not-allowed disabled:opacity-50"
         >
           Review
         </button>

@@ -8,7 +8,7 @@
   /* Text */
   --color-ink: #14162a;
   --color-muted: #585d78;
-  --color-faint: #888ea9;
+  --color-faint: #6a708c; /* 4.9:1 on white, 4.7:1 on canvas */
 
   /* Hairlines */
   --color-line: #e3e5f0;
@@ -39,6 +39,15 @@
   /* Type */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-landing: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Public marketplace pages (landing, /services) */
+  --color-canvas: #f7fafc;
+  --color-sky: #2f6fed;
+  --color-sky-dark: #1f56c7;
+  --color-sky-soft: #e8f0fe;
+  --color-pine: #1e6b4f;
+  --color-pine-soft: #e3f2ec;
 }
 
 @layer base {
@@ -77,9 +86,73 @@
     animation: step-enter 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
+  /* Listing cards settle in when a filter changes. */
+  .animate-settle {
+    animation: step-enter 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .animate-step {
+    .animate-step,
+    .animate-settle {
       animation: none;
     }
   }
+}
+
+/*
+ * Marketplace theme for the auth screens (sign in, sign up, vouch recovery).
+ * Remaps the app tokens so existing components pick up the public-site look
+ * without touching their logic. Dashboards keep the original theme.
+ */
+.theme-marketplace {
+  --color-brand: var(--color-sky);
+  --color-brand-dark: var(--color-sky-dark);
+  --color-brand-tint: var(--color-sky-soft);
+  --color-brand-line: #c3d5fb;
+  --color-background: var(--color-canvas);
+  --color-jade: var(--color-pine);
+  --color-jade-tint: var(--color-pine-soft);
+  --font-sans: var(--font-landing);
+  --font-serif: var(--font-landing);
+  font-family: var(--font-landing);
+}
+
+/*
+ * Buyer dashboard: used together with .theme-marketplace. Some dashboard
+ * components are shared with the lister and admin dashboards, so these
+ * adjustments are scoped here instead of edited into those components.
+ */
+.theme-dashboard {
+  --radius-md: 0.75rem;
+  --radius-lg: 0.875rem;
+}
+.theme-dashboard .font-serif {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+.theme-dashboard .font-serif:is(.text-lg, .text-xl) {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.theme-dashboard .uppercase {
+  text-transform: none;
+  letter-spacing: 0;
+}
+.theme-dashboard :is(a, button).bg-brand.rounded-md {
+  border-radius: 9999px;
+}
+/* Older dashboard panels were square boxes; give every bordered surface the card radius. */
+.theme-dashboard .border.bg-surface:not([class*="rounded"]) {
+  border-radius: 1rem;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
 }

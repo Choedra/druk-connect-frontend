@@ -152,7 +152,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
   };
 
   /**
-   * Invite someone who isn't currently on DrukConnect.
+   * Invite someone who isn't currently on Bhutanese Marketplace.
    */
   const handleSendInvite = () => {
     const email = inviteTo.trim();
@@ -167,7 +167,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
         data: {
           email,
           message:
-            "I'd like you to join DrukConnect and vouch for me as a community member.",
+            "I'd like you to join Bhutanese Marketplace and vouch for me as a community member.",
         },
       },
       {
@@ -304,7 +304,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
                 className="rounded-xl border border-line bg-surface p-3.5"
               >
                 <div className="flex items-center">
-                  <Avatar imageUrl={member.profileImageUrl} name={memberName} tone="ink" size={32} />
+                  <Avatar name={memberName} tone="ink" size={32} />
                 </div>
 
                 <p className="mt-2.5 truncate text-[13.5px] font-medium text-ink">
@@ -331,7 +331,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
         />
 
         <p className="text-[13px] leading-5 text-muted">
-          Two real members help keep DrukConnect trusted and make it harder for
+          Two real members help keep Bhutanese Marketplace trusted and make it harder for
           fake accounts and scammers to join the marketplace.
         </p>
       </div>
@@ -394,7 +394,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
                       className="flex items-center justify-between gap-3 bg-surface px-3.5 py-3"
                     >
                       <div className="flex min-w-0 items-center gap-2.5">
-                        <Avatar imageUrl={member.profileImageUrl} name={memberName} size={32} />
+                        <Avatar name={memberName} size={32} />
 
                         <div className="min-w-0">
                           <p className="truncate text-[13.5px] font-medium text-ink">
@@ -433,7 +433,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
       ───────────────────────────────────────── */}
       <section className="mt-6 rounded-xl border border-line bg-surface p-4">
         <p className="text-[13.5px] font-medium text-ink">
-          Not on DrukConnect yet?
+          Not on Bhutanese Marketplace yet?
         </p>
 
         <p className="mt-1 text-[12.5px] leading-5 text-muted">

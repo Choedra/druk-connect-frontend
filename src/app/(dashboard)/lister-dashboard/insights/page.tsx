@@ -1,6 +1,7 @@
 "use client";
 
 import { Eye, MessageSquare, Store, Users } from "lucide-react";
+import { PageHeader } from "@/src/shared/dashboard/PageHeader";
 
 const OVERVIEW = [
   {
@@ -78,7 +79,7 @@ const ACTIVITY = [
 
 export default function InsightsPage() {
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-8">
+    <div className="w-full space-y-8">
       <InsightsHeader />
 
       <OverviewStats />
@@ -94,27 +95,18 @@ export default function InsightsPage() {
 
 function InsightsHeader() {
   return (
-    <header>
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand">
-        Performance
-      </p>
-
-      <h1 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink">
-        Insights
-      </h1>
-
-      <p className="mt-2 text-sm text-muted">
-        See how your listings and profile are performing.
-      </p>
-    </header>
+    <PageHeader
+      title="Insights"
+      description="See how your listings and profile are performing."
+    />
   );
 }
 
 function OverviewStats() {
   return (
-    <section className="grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+    <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {OVERVIEW.map((stat) => (
-        <div key={stat.label} className="bg-surface p-5">
+        <div key={stat.label} className="rounded-2xl border border-line bg-white p-5">
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
               {stat.label}

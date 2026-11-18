@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useMyRestrictions } from "@/src/features/lister-restrictions/hooks/useMyRestrictions";
 import { useSubmitAppeal } from "@/src/features/lister-restrictions/hooks/useSubmitAppeal";
+import { PageHeader } from "@/src/shared/dashboard/PageHeader";
 
 export default function AccountSuspendedPage() {
   const { data: restrictions, isPending, isError, error } = useMyRestrictions();
@@ -31,18 +32,18 @@ export default function AccountSuspendedPage() {
 
   if (isPending) {
     return (
-      <main className="mx-auto w-full max-w-4xl space-y-5 p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-4xl space-y-5">
         <div className="h-8 w-56 animate-pulse rounded-lg bg-background" />
         <div className="h-44 animate-pulse rounded-xl bg-background" />
         <div className="h-36 animate-pulse rounded-xl bg-background" />
         <p className="text-sm text-muted">Loading restriction details...</p>
-      </main>
+      </div>
     );
   }
 
   if (isError || !restrictions) {
     return (
-      <main className="mx-auto w-full max-w-4xl p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-4xl">
         <section
           role="alert"
           className="rounded-xl border border-red-200 bg-surface p-6 sm:p-8"
@@ -59,13 +60,13 @@ export default function AccountSuspendedPage() {
               : "Something went wrong while retrieving your account status. Please try again later."}
           </p>
         </section>
-      </main>
+      </div>
     );
   }
 
   if (!restrictions.restricted) {
     return (
-      <main className="mx-auto w-full max-w-4xl p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-4xl">
         <section className="rounded-xl border border-green-200 bg-surface p-6 sm:p-8">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-50">
             <CheckCircle2 className="h-6 w-6 text-green-700" />
@@ -80,7 +81,7 @@ export default function AccountSuspendedPage() {
             using the features available to your account.
           </p>
         </section>
-      </main>
+      </div>
     );
   }
 
@@ -101,7 +102,12 @@ export default function AccountSuspendedPage() {
   const appealStatusAfterSubmit = appealMutation.data?.status;
 
   return (
-    <main className="mx-auto w-full max-w-4xl space-y-6 p-4 sm:p-6 lg:p-8">
+    <div className="w-full max-w-4xl space-y-6">
+      <PageHeader
+        title="Account suspended"
+        description="Why your listing privileges are restricted, and how to appeal."
+      />
+
       {/* Restriction overview */}
       <section className="overflow-hidden rounded-xl border border-red-200 bg-surface">
         <div className="bg-red-50 p-6 sm:p-8">
@@ -115,9 +121,9 @@ export default function AccountSuspendedPage() {
                 Listing restriction active
               </span>
 
-              <h1 className="mt-3 text-xl font-bold tracking-tight text-ink sm:text-2xl">
+              <h2 className="mt-3 text-xl font-bold tracking-tight text-ink sm:text-2xl">
                 Your listing privileges are restricted
-              </h1>
+              </h2>
 
               <p className="mt-2 text-sm leading-6 text-muted">
                 {restrictions.message ??
@@ -159,13 +165,13 @@ export default function AccountSuspendedPage() {
             </h2>
 
             <p className="mt-1 text-sm leading-6 text-muted">
-              Explanation recorded by the DrukConnect moderation team.
+              Explanation recorded by the Bhutanese Marketplace moderation team.
             </p>
 
             <div className="mt-4 rounded-lg border border-red-100 bg-red-50/50 p-4">
               <p className="whitespace-pre-wrap text-sm leading-7 text-ink">
                 {restrictions.reason?.trim() ||
-                  "No additional explanation has been provided. Contact DrukConnect support for clarification."}
+                  "No additional explanation has been provided. Contact Bhutanese Marketplace support for clarification."}
               </p>
             </div>
 
@@ -367,11 +373,11 @@ export default function AccountSuspendedPage() {
             <p className="mt-2 text-sm leading-6 text-muted">
               {restrictions.latestAppealStatus?.toUpperCase() === "PENDING"
                 ? "Your appeal is awaiting moderation review. You do not need to submit another appeal while it is pending."
-                : "An appeal cannot currently be submitted. Contact DrukConnect support for clarification about your appeal eligibility."}
+                : "An appeal cannot currently be submitted. Contact Bhutanese Marketplace support for clarification about your appeal eligibility."}
             </p>
           </div>
         )}
       </section>
-    </main>
+    </div>
   );
 }

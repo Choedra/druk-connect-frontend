@@ -1,428 +1,267 @@
 "use client";
 
-import { Search, X } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { ChevronLeft, ChevronRight, Plus, RotateCw, SearchX } from "lucide-react";
 
-import { ServiceCard } from "./ui/ServiceCard";
-import { useSearchListings } from "../listing/hooks/useSearchListings";
+import { ListingCard, ListingCardSkeleton } from "@/src/features/landing-page/ui/ListingCard";
+import { SearchForm } from "@/src/features/landing-page/ui/SearchForm";
+import { isListingCategory, isListingCity } from "@/src/features/listing/constants/categories";
+import { useSearchListings } from "@/src/features/listing/hooks/useSearchListings";
+import { FilterBar } from "./ui/FilterBar";
 
-const CITIES = [
-  "All cities",
-  "Melbourne",
-  "Sydney",
-  "Brisbane",
-  "Adelaide",
-  "Perth",
-  "Canberra",
-];
+const PAGE_SIZE = 12;
 
-const CATEGORIES = [
-  "All categories",
-  "Food & Catering",
-  "Tax & Accounting",
-  "Moving & Relocation",
-  "Childcare",
-  "Tutoring",
-  "Automotive",
-  "Hair & Beauty",
-  "Resume & Career",
-  "Airport Pickup",
-];
+type Filters = { q?: string; city?: string; category?: string; page: number };
 
-export default function ServicesPage() {
-  const [category, setCategory] = useState("All categories");
-  const [city, setCity] = useState("All cities");
+/** Reads and validates filters from the URL. Unknown cities/categories are ignored. */
+function readFilters(params: URLSearchParams): Filters {
+  const q = params.get("q")?.trim() || undefined;
+  const city = params.get("city");
+  const category = params.get("category");
+  const page = Number(params.get("page"));
+  return {
+    q,
+    city: isListingCity(city) ? city : undefined,
+    category: isListingCategory(category) ? category : undefined,
+    page: Number.isInteger(page) && page > 1 ? page : 1,
+  };
+}
 
-  const [search, setSearch] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+/** Builds a results URL under basePath. Changing any filter resets to page 1. */
+function buildHref(
+  basePath: string,
+  current: Filters,
+  changes: { q?: string | null; city?: string | null; category?: string | null; page?: number },
+) {
+  const next = { ...current, page: 1, ...changes };
+  const qs = new URLSearchParams();
+  if (next.q) qs.set("q", next.q);
+  if (next.category) qs.set("category", next.category);
+  if (next.city) qs.set("city", next.city);
+  if (next.page && next.page > 1) qs.set("page", String(next.page));
+  const s = qs.toString();
+  return s ? `${basePath}?${s}` : basePath;
+}
 
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
+function headingFor({ q, city, category }: Filters) {
+  if (q) return `Results for “${q}”${city ? ` in ${city}` : ""}`;
+  if (category) return `${category} in ${city ?? "Australia"}`;
+  if (city) return `Services in ${city}`;
+  return "All services";
+}
 
-  const { data, isLoading, isError, error, isFetching } = useSearchListings({
-    category: category === "All categories" ? undefined : category,
-    city: city === "All cities" ? undefined : city,
-    q: searchQuery || undefined,
-    page,
-    size: pageSize,
+type ServicesPageProps = {
+  /** Where results and listing links live: "/services" (public) or "/buyer-dashboard/services". */
+  basePath?: string;
+  /** "dashboard": rendered inside the buyer dashboard layout. */
+  variant?: "public" | "dashboard";
+};
+
+export default function ServicesPage({ basePath = "/services", variant = "public" }: ServicesPageProps) {
+  const filters = readFilters(useSearchParams());
+  const hasFilters = Boolean(filters.q || filters.city || filters.category);
+  const hrefFor = (changes: Parameters<typeof buildHref>[2]) => buildHref(basePath, filters, changes);
+  const inDashboard = variant === "dashboard";
+
+  const { data, isLoading, isError, isFetching, refetch } = useSearchListings({
+    q: filters.q,
+    city: filters.city,
+    category: filters.category,
+    page: filters.page,
+    size: PAGE_SIZE,
   });
 
   const listings = data?.listings ?? [];
+  const total = data?.totalElements ?? 0;
 
-  const hasFilters =
-    category !== "All categories" ||
-    city !== "All cities" ||
-    searchQuery !== "";
-
-  const clearFilters = () => {
-    setCategory("All categories");
-    setCity("All cities");
-    setSearch("");
-    setSearchQuery("");
-    setPage(1);
-  };
-
-  const handleCategoryChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setCategory(event.target.value);
-    setPage(1);
-  };
-
-  const handleCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setCity(event.target.value);
-    setPage(1);
-  };
-
-  const handleSearch = () => {
-    setSearchQuery(search.trim());
-    setPage(1);
-  };
-
-  const handleSearchKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (event.key === "Enter") {
-      handleSearch();
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <main className="min-h-screen bg-background">
-        <section className="relative overflow-hidden border-b border-line">
-          <div aria-hidden className="pointer-events-none absolute inset-0">
-            <div className="absolute -left-40 -top-40 h-125 w-125 rounded-full bg-brand/5 blur-3xl" />
-            <div className="absolute -bottom-40 -right-40 h-112.5 w-112.5 rounded-full bg-jade/4 blur-3xl" />
-
-            <div
-              className="absolute inset-0 opacity-[0.02]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-                backgroundSize: "72px 72px",
-              }}
-            />
-          </div>
-
-          <div className="relative mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">
-            <div className="mx-auto max-w-3xl text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                Bhutanese marketplace in Australia
-              </p>
-
-              <h1 className="mt-5 font-serif text-[48px] font-medium leading-[0.98] tracking-[-0.045em] text-ink sm:text-[62px]">
-                Services for <span className="text-brand">the community.</span>
-              </h1>
-
-              <p className="mx-auto mt-6 max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
-                Find trusted people offering useful services across Australia.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div
-                key={index}
-                className="overflow-hidden rounded-md border border-line bg-surface"
-              >
-                <div className="aspect-[4/3] animate-pulse bg-line/40" />
-
-                <div className="space-y-3 p-5">
-                  <div className="h-4 w-24 animate-pulse rounded bg-line/50" />
-                  <div className="h-6 w-3/4 animate-pulse rounded bg-line/50" />
-                  <div className="h-4 w-1/2 animate-pulse rounded bg-line/50" />
-                  <div className="h-4 w-1/3 animate-pulse rounded bg-line/50" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
-    );
-  }
-
-  if (isError) {
-    return (
-      <main className="min-h-screen bg-background">
-        <section className="relative overflow-hidden border-b border-line">
-          <div aria-hidden className="pointer-events-none absolute inset-0">
-            <div className="absolute -left-40 -top-40 h-125 w-125 rounded-full bg-brand/5 blur-3xl" />
-            <div className="absolute -bottom-40 -right-40 h-112.5 w-112.5 rounded-full bg-jade/4 blur-3xl" />
-          </div>
-
-          <div className="relative mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">
-            <div className="mx-auto max-w-2xl text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                Bhutanese marketplace in Australia
-              </p>
-
-              <h1 className="mt-5 font-serif text-4xl font-medium tracking-[-0.04em] text-ink sm:text-5xl">
-                Services for <span className="text-brand">the community.</span>
-              </h1>
-
-              <p className="mt-5 text-sm leading-6 text-muted">
-                We couldn't load the community listings right now.
-              </p>
-
-              {error?.message && (
-                <p className="mt-2 text-xs text-muted">{error.message}</p>
-              )}
-            </div>
-          </div>
-        </section>
-      </main>
-    );
-  }
+  // In the dashboard the layout already provides <main>, padding and the page width.
+  const Wrapper = inDashboard ? "div" : "main";
+  const contentClass = inDashboard ? "py-8" : "mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:py-10";
 
   return (
-    <main className="min-h-screen bg-background">
-      {/* Page intro */}
-      <section className="relative overflow-hidden border-b border-line">
-        {/* Atmosphere */}
-        <div aria-hidden className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-40 -top-40 h-125 w-125 rounded-full bg-brand/5 blur-3xl" />
-
-          <div className="absolute -bottom-40 -right-40 h-112.5 w-112.5 rounded-full bg-jade/4 blur-3xl" />
-
-          <div
-            className="absolute inset-0 opacity-[0.02]"
-            style={{
-              backgroundImage:
-                "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-              backgroundSize: "72px 72px",
-            }}
+    <Wrapper
+      {...(inDashboard ? {} : { id: "main" })}
+      className={inDashboard ? "font-landing text-ink" : "min-h-[70vh] bg-white font-landing text-ink"}
+    >
+      <section className={inDashboard ? "pb-6" : "bg-canvas"}>
+        <div className={inDashboard ? "" : "mx-auto max-w-7xl px-5 pb-8 pt-10 sm:px-8 lg:pt-12"}>
+          <h1 className="text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl">{headingFor(filters)}</h1>
+          {/* key resets the uncontrolled input when the URL changes */}
+          <SearchForm
+            key={`${filters.q}-${filters.city}-${filters.category}`}
+            action={basePath}
+            size="md"
+            showCity={false}
+            defaultQuery={filters.q}
+            defaultCity={filters.city}
+            category={filters.category}
+            className="mt-6 max-w-3xl"
           />
-        </div>
-
-        <div className="relative mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-              Bhutanese marketplace in Australia
-            </p>
-
-            <h1 className="mt-5 font-serif text-[48px] font-medium leading-[0.98] tracking-[-0.045em] text-ink sm:text-[62px]">
-              Services for <span className="text-brand">the community.</span>
-            </h1>
-
-            <p className="mx-auto mt-6 max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
-              Find trusted people offering useful services across Australia.
-            </p>
-          </div>
         </div>
       </section>
 
-      {/* Marketplace */}
-      <section className="mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-10 lg:py-8">
-        {/* Filters */}
-        <div className="rounded-md border border-line-strong bg-surface p-3 sm:p-4">
-          <div className="flex flex-col gap-3 lg:flex-row">
-            {/* Category */}
-            <select
-              value={category}
-              onChange={handleCategoryChange}
-              className="h-11 rounded-md border border-line bg-background px-3 text-sm text-ink outline-none transition-colors focus:border-brand"
-            >
-              {CATEGORIES.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+      <FilterBar
+        activeCategory={filters.category}
+        activeCity={filters.city}
+        hrefFor={hrefFor}
+        variant={inDashboard ? "dashboard" : "public"}
+      />
 
-            {/* City */}
-            <select
-              value={city}
-              onChange={handleCityChange}
-              className="h-11 rounded-md border border-line bg-background px-3 text-sm text-ink outline-none transition-colors focus:border-brand"
-            >
-              {CITIES.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-
-            {/* Search */}
-            <div className="flex min-w-0 flex-1 items-center rounded-md border border-line bg-background px-3 focus-within:border-brand">
-              <Search className="h-4 w-4 shrink-0 text-muted" />
-
-              <input
-                type="search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                onKeyDown={handleSearchKeyDown}
-                placeholder="Search services, providers..."
-                className="h-11 min-w-0 flex-1 bg-transparent px-3 text-sm text-ink outline-none placeholder:text-faint"
-              />
-            </div>
-
-            {/* Search button */}
-            <button
-              type="button"
-              onClick={handleSearch}
-              disabled={isFetching}
-              className="h-11 shrink-0 rounded-md bg-brand px-6 text-sm font-semibold text-white transition-colors hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isFetching ? "Searching..." : "Search"}
-            </button>
-          </div>
-
-          {/* Active filters */}
+      <div className={contentClass}>
+        <div className="flex min-h-6 items-center justify-between gap-4">
+          <p className="text-muted" aria-live="polite">
+            {!isLoading && !isError && (
+              <>
+                <span className="font-semibold text-ink">{total}</span> {total === 1 ? "service" : "services"}
+              </>
+            )}
+          </p>
           {hasFilters && (
-            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3">
-              <span className="mr-1 text-xs font-medium text-muted">
-                Filters:
-              </span>
-
-              {category !== "All categories" && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCategory("All categories");
-                    setPage(1);
-                  }}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-brand-tint px-2.5 py-1.5 text-xs font-medium text-brand"
-                >
-                  {category}
-                  <X className="h-3 w-3" />
-                </button>
-              )}
-
-              {city !== "All cities" && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCity("All cities");
-                    setPage(1);
-                  }}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-brand-tint px-2.5 py-1.5 text-xs font-medium text-brand"
-                >
-                  {city}
-                  <X className="h-3 w-3" />
-                </button>
-              )}
-
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearch("");
-                    setSearchQuery("");
-                    setPage(1);
-                  }}
-                  className="inline-flex max-w-full items-center gap-1.5 rounded-md bg-brand-tint px-2.5 py-1.5 text-xs font-medium text-brand"
-                >
-                  <span className="max-w-40 truncate">"{searchQuery}"</span>
-
-                  <X className="h-3 w-3 shrink-0" />
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="ml-auto text-xs font-medium text-muted underline-offset-4 hover:text-ink hover:underline"
-              >
-                Clear all
-              </button>
-            </div>
+            <Link href={basePath} scroll={false} className="text-sm font-semibold text-sky hover:underline hover:underline-offset-4">
+              Clear search and filters
+            </Link>
           )}
         </div>
 
-        {/* Results heading */}
-        <div className="mt-10 flex items-end justify-between gap-6">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-              Community listings
-            </p>
-
-            <h2 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink">
-              Find what you need.
-            </h2>
-          </div>
-
-          <p className="hidden text-sm text-muted sm:block">
-            <span className="font-semibold text-ink">
-              {data?.totalElements ?? 0}
-            </span>{" "}
-            {data?.totalElements === 1 ? "listing" : "listings"}
-          </p>
-        </div>
-
-        {/* Results */}
-        {listings.length > 0 ? (
-          <div className="relative mt-8">
-            {isFetching && (
-              <div className="absolute inset-x-0 -top-4 h-0.5 overflow-hidden rounded-full bg-brand/20">
-                <div className="h-full w-1/3 animate-pulse bg-brand" />
-              </div>
-            )}
-
-            <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {listings.map((listing) => (
-                <ServiceCard key={listing.id} listing={listing} />
-              ))}
-            </div>
-          </div>
+        {isError ? (
+          <ErrorState onRetry={() => refetch()} retrying={isFetching} />
+        ) : isLoading ? (
+          <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4" aria-busy="true">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <li key={i}>
+                <ListingCardSkeleton />
+              </li>
+            ))}
+          </ul>
+        ) : listings.length === 0 ? (
+          <EmptyState filters={filters} hrefFor={hrefFor} basePath={basePath} showListCta={!inDashboard} />
         ) : (
-          <div className="mt-8 border border-dashed border-line-strong bg-surface px-6 py-16 text-center">
-            <Search className="mx-auto h-8 w-8 text-faint" />
+          <>
+            <ul
+              className={`mt-5 grid gap-4 transition-opacity sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4 ${
+                isFetching ? "opacity-60" : ""
+              }`}
+              aria-busy={isFetching}
+            >
+              {listings.map((listing) => (
+                <li key={listing.id}>
+                  <ListingCard listing={listing} hrefBase={basePath} />
+                </li>
+              ))}
+            </ul>
 
-            <h3 className="mt-5 font-serif text-2xl font-medium text-ink">
-              No services found.
-            </h3>
-
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">
-              Try changing your category, city, or search terms to find more
-              community listings.
-            </p>
-
-            {hasFilters && (
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="mt-6 rounded-md border border-line-strong bg-surface px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-brand hover:text-brand"
-              >
-                Clear filters
-              </button>
+            {data && data.totalPages > 1 && (
+              <nav aria-label="Pagination" className="mt-12 flex items-center justify-center gap-3">
+                <PageLink href={hrefFor({ page: filters.page - 1 })} disabled={!data.hasPrevious}>
+                  <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                  Previous
+                </PageLink>
+                <span className="px-2 text-sm text-muted">
+                  Page <span className="font-semibold text-ink">{data.currentPage}</span> of{" "}
+                  <span className="font-semibold text-ink">{data.totalPages}</span>
+                </span>
+                <PageLink href={hrefFor({ page: filters.page + 1 })} disabled={!data.hasNext}>
+                  Next
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                </PageLink>
+              </nav>
             )}
-          </div>
+
+            {!inDashboard && (
+            <div className="mt-12 flex flex-col items-start gap-4 rounded-2xl bg-canvas p-6 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-muted">
+                <span className="font-semibold text-ink">Offer a service yourself?</span> List it for free and
+                reach the community.
+              </p>
+              <Link
+                href="/auth/signup?role=LISTER"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 font-semibold text-white hover:bg-ink/90"
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                List your service
+              </Link>
+            </div>
+            )}
+          </>
         )}
+      </div>
+    </Wrapper>
+  );
+}
 
-        {/* Pagination */}
-        {data && data.totalPages > 1 && (
-          <div className="mt-10 flex items-center justify-center gap-4">
-            <button
-              type="button"
-              disabled={!data.hasPrevious || isFetching}
-              onClick={() => setPage((current) => current - 1)}
-              className="rounded-md border border-line-strong bg-surface px-4 py-2 text-sm font-medium text-ink disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Previous
-            </button>
+function PageLink({ href, disabled, children }: { href: string; disabled: boolean; children: React.ReactNode }) {
+  const className = "inline-flex items-center gap-1.5 rounded-full border border-line px-4 py-2 text-sm font-semibold";
+  if (disabled) {
+    return (
+      <span aria-disabled="true" className={`${className} cursor-not-allowed text-faint`}>
+        {children}
+      </span>
+    );
+  }
+  return (
+    <Link href={href} className={`${className} text-ink hover:border-ink/30`}>
+      {children}
+    </Link>
+  );
+}
 
-            <span className="text-sm text-muted">
-              Page{" "}
-              <span className="font-semibold text-ink">{data.currentPage}</span>{" "}
-              of{" "}
-              <span className="font-semibold text-ink">{data.totalPages}</span>
-            </span>
+function ErrorState({ onRetry, retrying }: { onRetry: () => void; retrying: boolean }) {
+  return (
+    <div className="mt-5 rounded-3xl border border-line bg-canvas px-6 py-16 text-center">
+      <p className="text-xl font-bold">Services couldn&apos;t be loaded.</p>
+      <p className="mt-2 text-muted">Check your connection and try again.</p>
+      <button
+        type="button"
+        onClick={onRetry}
+        disabled={retrying}
+        className="mt-6 inline-flex items-center gap-2 rounded-full border border-line bg-white px-5 py-2.5 font-semibold hover:border-ink/30 disabled:opacity-60"
+      >
+        <RotateCw className={`h-4 w-4 ${retrying ? "animate-spin" : ""}`} aria-hidden="true" />
+        Try again
+      </button>
+    </div>
+  );
+}
 
-            <button
-              type="button"
-              disabled={!data.hasNext || isFetching}
-              onClick={() => setPage((current) => current + 1)}
-              className="rounded-md border border-line-strong bg-surface px-4 py-2 text-sm font-medium text-ink disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Next
-            </button>
-          </div>
+function EmptyState({
+  filters,
+  hrefFor,
+  basePath,
+  showListCta,
+}: {
+  filters: Filters;
+  hrefFor: (c: { city?: null }) => string;
+  basePath: string;
+  showListCta: boolean;
+}) {
+  const where = filters.city ? ` in ${filters.city}` : "";
+  const title = filters.q ? `No results for “${filters.q}”${where}` : `No services${where} yet`;
+  const detail = filters.category
+    ? `There's nothing in ${filters.category}${where} yet. Try another category or all cities.`
+    : "Try fewer words, another category or all cities.";
+  return (
+    <div className="mt-5 flex flex-col items-center rounded-3xl border border-dashed border-line px-6 py-16 text-center">
+      <span className="grid h-14 w-14 place-items-center rounded-full bg-canvas text-muted">
+        <SearchX className="h-7 w-7" aria-hidden="true" />
+      </span>
+      <h2 className="mt-5 text-2xl font-bold">{title}</h2>
+      <p className="mt-2 max-w-md text-muted">{detail}</p>
+      <div className="mt-6 flex flex-wrap justify-center gap-3">
+        {filters.city && (
+          <Link href={hrefFor({ city: null })} className="rounded-full border border-line px-5 py-2.5 font-semibold hover:border-ink/30">
+            Search all cities
+          </Link>
         )}
-      </section>
-    </main>
+        <Link href={basePath} className="rounded-full border border-line px-5 py-2.5 font-semibold hover:border-ink/30">
+          Clear filters
+        </Link>
+        {showListCta && (
+          <Link href="/auth/signup?role=LISTER" className="rounded-full bg-sky px-5 py-2.5 font-semibold text-white hover:bg-sky-dark">
+            List your service
+          </Link>
+        )}
+      </div>
+    </div>
   );
 }

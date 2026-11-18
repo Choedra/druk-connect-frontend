@@ -64,7 +64,7 @@ export default function ReportScamModal({
             </h2>
 
             <p className="mt-1 text-sm text-gray-500">
-              Help us keep the DrukConnect community safe.
+              Help us keep the Bhutanese Marketplace community safe.
             </p>
           </div>
 

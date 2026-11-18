@@ -10,6 +10,8 @@ import { useMyRestrictions } from "../../lister-restrictions/hooks/useMyRestrict
 import { AvailabilityDaysField } from "./AvailabilityDaysField";
 import type { AvailabilityDay } from "../utils/availability";
 import MicroFeedbackForm from "../../feedback/ui/MicroFeedbackForm";
+import { LISTING_CATEGORIES } from "../constants/categories";
+import { PageHeader } from "@/src/shared/dashboard/PageHeader";
 
 export default function NewListingPage() {
   const router = useRouter();
@@ -83,31 +85,12 @@ export default function NewListingPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-8">
-      <header>
-        <Link
-          href="/lister-dashboard/listings"
-          className="inline-flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-ink"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to listings
-        </Link>
-
-        <div className="mt-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand">
-            My listings
-          </p>
-
-          <h1 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink">
-            Create a listing
-          </h1>
-
-          <p className="mt-2 text-sm leading-6 text-muted">
-            Add your service so people in the Bhutanese community can find and
-            contact you.
-          </p>
-        </div>
-      </header>
+    <div className="w-full max-w-3xl space-y-8">
+      <PageHeader
+        back={{ href: "/lister-dashboard/listings", label: "Back to listings" }}
+        title="Create a listing"
+        description="Add your service so people in the Bhutanese community can find and contact you."
+      />
 
       {isRestrictionLoading ? (
         <div className="border border-line bg-surface p-6">
@@ -194,15 +177,7 @@ export default function NewListingPage() {
                 <SelectField
                   label="Listing category"
                   name="listingCategory"
-                  options={[
-                    "Food & Catering",
-                    "Education",
-                    "Transport",
-                    "Home Services",
-                    "Beauty & Wellness",
-                    "Professional Services",
-                    "Other",
-                  ]}
+                  options={[...LISTING_CATEGORIES]}
                   required
                 />
 

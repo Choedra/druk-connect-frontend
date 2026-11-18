@@ -1,151 +1,117 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { useState } from "react";
 import {
-  ArrowUpRight,
-  CheckCircle2,
-  MessageSquare,
+  ArrowRight,
+  BadgeCheck,
+  ClipboardList,
+  MessageCircle,
   Search,
-  Sparkles,
+  Star,
   UserPlus,
+  type LucideIcon,
 } from "lucide-react";
 
-const STEPS = [
-  {
-    step: "01",
-    title: "Create your free account",
-    description:
-      "Sign up in seconds using your email or social logins. Membership is 100% free for everyone in the community.",
-    icon: UserPlus,
-  },
-  {
-    step: "02",
-    title: "Browse or list a service",
-    description:
-      "Search for trusted providers ranging from tax returns to moving help, or publish your own professional listing at zero cost.",
-    icon: Search,
-  },
-  {
-    step: "03",
-    title: "Connect directly",
-    description:
-      "Message providers securely, discuss your needs, and get things done with fellow Bhutanese members across Australia.",
-    icon: MessageSquare,
-  },
-];
+type Step = { icon: LucideIcon; title: string; text: string };
+type Mode = "find" | "offer";
 
-const containerVariants = {
-  hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.12,
-    },
+const FLOWS: Record<Mode, { label: string; steps: Step[]; cta: { label: string; href: string } }> = {
+  find: {
+    label: "I need a service",
+    steps: [
+      { icon: Search, title: "Search your city", text: "Filter by category and city to find providers near you." },
+      {
+        icon: MessageCircle,
+        title: "Contact the provider",
+        text: "Sign in and message them on WhatsApp, straight from the listing.",
+      },
+      { icon: Star, title: "Leave a review", text: "Once you've used the service, rate it to help the next person." },
+    ],
+    cta: { label: "Browse services", href: "/services" },
   },
-};
-
-const stepVariants = {
-  hidden: { opacity: 0, y: 24 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+  offer: {
+    label: "I offer a service",
+    steps: [
+      { icon: UserPlus, title: "Create your account", text: "Sign up as a provider and verify your email." },
+      {
+        icon: BadgeCheck,
+        title: "Get two vouches",
+        text: "Ask two members who know you to vouch for you. It keeps the marketplace trustworthy.",
+      },
+      {
+        icon: ClipboardList,
+        title: "Post your listing",
+        text: "Add photos, your price and availability. People contact you directly.",
+      },
+    ],
+    cta: { label: "List your service", href: "/auth/signup?role=LISTER" },
   },
 };
 
 export function HowItWorks() {
+  const [mode, setMode] = useState<Mode>("find");
+  const flow = FLOWS[mode];
+
   return (
-    <section className="relative border-b border-line bg-surface/30 py-20 sm:py-24 lg:py-28 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-        {/* Section Header */}
-        <div className="max-w-2xl mb-16 sm:mb-20">
-          <div className="mb-3 flex items-center gap-2">
-            <span className="inline-flex h-6 items-center gap-1.5 rounded-full bg-jade/10 px-3 text-xs font-semibold text-jade">
-              <Sparkles className="h-3.5 w-3.5" /> Simple Process
-            </span>
+    <section id="how-it-works" className="scroll-mt-20 py-20 lg:py-24">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-20">
+        <div>
+          <h2 className="text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-4xl">How it works</h2>
+          <p className="mt-3 max-w-md text-lg text-muted">Simple whether you&apos;re looking for help or offering it.</p>
+
+          <div role="tablist" aria-label="Choose a guide" className="mt-8 inline-flex rounded-full border border-line bg-canvas p-1">
+            {(Object.keys(FLOWS) as Mode[]).map((key) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                id={`how-tab-${key}`}
+                aria-selected={mode === key}
+                aria-controls="how-panel"
+                onClick={() => setMode(key)}
+                className={`rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${
+                  mode === key ? "bg-ink text-white" : "text-muted hover:text-ink"
+                }`}
+              >
+                {FLOWS[key].label}
+              </button>
+            ))}
           </div>
-          <h2 className="font-serif text-[36px] font-medium leading-[1.1] tracking-[-0.02em] text-ink sm:text-[44px] lg:text-[50px]">
-            How DrukConnect works for you
-          </h2>
-          <p className="mt-4 text-base text-muted sm:text-lg leading-relaxed">
-            Whether you are settling into a new city or looking to grow your
-            local client base, getting started takes less than a minute.
-          </p>
+
+          <Link
+            href={flow.cta.href}
+            className="mt-8 flex w-fit items-center gap-1.5 font-semibold text-sky hover:underline hover:underline-offset-4"
+          >
+            {flow.cta.label}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
         </div>
 
-        {/* Steps Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 relative"
-        >
-          {STEPS.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <motion.div
-                key={item.step}
-                variants={stepVariants}
-                className="relative flex flex-col justify-between rounded-[28px] border border-line bg-background p-8 sm:p-10 shadow-sm transition-all duration-300 hover:border-brand/40 hover:shadow-md"
+        <div id="how-panel" role="tabpanel" aria-labelledby={`how-tab-${mode}`}>
+          <ol key={mode} className="relative">
+            {flow.steps.map(({ icon: Icon, title, text }, i) => (
+              <li
+                key={title}
+                className="animate-settle relative flex gap-5 pb-10 last:pb-0"
+                style={{ animationDelay: `${i * 60}ms` }}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-8">
-                    <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/6 text-brand border border-brand/10">
-                      <Icon className="h-6 w-6" />
-                    </span>
-                    <span className="font-mono text-xl font-medium text-muted/50">
-                      {item.step}
-                    </span>
-                  </div>
-
-                  <h3 className="text-xl font-semibold text-ink tracking-tight">
-                    {item.title}
-                  </h3>
-
-                  <p className="mt-3 text-sm text-muted leading-relaxed">
-                    {item.description}
-                  </p>
+                {/* connector line between steps */}
+                {i < flow.steps.length - 1 && (
+                  <span aria-hidden="true" className="absolute left-6 top-14 bottom-2 w-px bg-line" />
+                )}
+                <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-sky-soft text-sky">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <div className="pt-1">
+                  <p className="text-sm font-semibold text-muted">Step {i + 1}</p>
+                  <h3 className="mt-0.5 text-xl font-bold text-ink">{title}</h3>
+                  <p className="mt-1.5 max-w-md leading-relaxed text-muted">{text}</p>
                 </div>
-
-                <div className="mt-8 pt-6 border-t border-line/60 flex items-center gap-2 text-xs font-medium text-jade">
-                  <CheckCircle2 className="h-4 w-4 shrink-0" />
-                  <span>Verified & secure process</span>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-        {/* Bottom Callout Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: 0.6,
-            delay: 0.3,
-            ease: [0.22, 1, 0.36, 1] as const,
-          }}
-          className="mt-16 flex flex-col sm:flex-row items-center justify-between gap-6 rounded-3xl border border-line bg-surface p-8 sm:px-10"
-        >
-          <div>
-            <h4 className="text-lg font-semibold text-ink">
-              Ready to join the community network?
-            </h4>
-            <p className="text-sm text-muted mt-1">
-              Join thousands of Bhutanese members connecting across Australia
-              today.
-            </p>
-          </div>
-          <Link
-            href="/auth/signup"
-            className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand px-7 text-sm font-medium text-white shadow-sm transition-all hover:bg-brand-dark"
-          >
-            Get started for free
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </motion.div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );

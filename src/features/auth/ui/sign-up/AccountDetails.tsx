@@ -237,7 +237,7 @@ export function AccountDetails({
     <div className="animate-step">
 
       <StepHeading
-        title="Join DrukConnect"
+        title="Join Bhutanese Marketplace"
         description="One account for the whole community — buying, renting, hiring and gathering across Australia."
       />
 

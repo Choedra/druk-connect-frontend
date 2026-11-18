@@ -81,7 +81,7 @@ export function AgreeFinish({ onFinish, isLoading = false }: AgreeFinishProps) {
           >
             privacy policy
           </Link>
-          , and I understand DrukConnect is a listing platform only — it
+          , and I understand Bhutanese Marketplace is a listing platform only — it
           doesn&apos;t verify, inspect or insure any service, and arrangements
           are made between members directly.
         </Consent>

@@ -1,2 +1,5 @@
-import ProfilePage from "@/src/features/profile/ui/ProfilePage";
-export default function Page() { return <ProfilePage />; }
+import { AccountProfilePage } from "@/src/shared/dashboard/AccountPages";
+
+export default function ProfilePage() {
+  return <AccountProfilePage roleLabel="Lister" />;
+}

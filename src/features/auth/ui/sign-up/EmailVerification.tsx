@@ -503,7 +503,7 @@ export function EmailVerification({
                   }
 
                   className={cn(
-                    "h-15.5 w-full min-w-0 rounded-xl border text-center font-serif text-[25px] text-ink outline-none transition",
+                    "h-15.5 w-full min-w-0 rounded-xl border text-center text-[25px] font-bold text-ink outline-none transition",
 
                     "disabled:cursor-not-allowed disabled:opacity-60",
 

@@ -191,7 +191,7 @@ export default function SignupPage() {
       <main className="min-h-screen bg-background text-ink">
         <Header />
 
-        <div className="mx-auto flex min-h-screen w-full max-w-5xl items-center px-6 pb-16 pt-28">
+        <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-5xl items-center px-6 py-14">
           <ChooseRole onSelect={handleRoleSelect} />
         </div>
       </main>

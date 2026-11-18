@@ -1,4 +1,3 @@
-import { UserAvatar } from "@/src/shared/ui/UserAvatar";
 import { CalendarDays, Mail, Phone } from "lucide-react";
 
 import type { GivenVouch } from "../types/vouchRequest";
@@ -22,7 +21,9 @@ export default function VouchCard({ vouch, onWithdraw }: VouchCardProps) {
     <article className="rounded-md border border-line bg-white p-5 transition-shadow hover:shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
-          <UserAvatar name={vouch.listerName} imageUrl={vouch.profileImageUrl} size={44} />
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-sky-soft text-sm font-bold text-sky">
+            {getInitials(vouch.listerName)}
+          </div>
 
           <div className="min-w-0">
             <h3 className="truncate font-semibold text-ink">
@@ -67,7 +68,7 @@ export default function VouchCard({ vouch, onWithdraw }: VouchCardProps) {
             <button
               type="button"
               onClick={onWithdraw}
-              className="rounded-md border border-[#7A2E33]/30 px-4 py-2 text-sm font-medium text-[#7A2E33] transition-colors hover:bg-[#7A2E33]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7A2E33] focus-visible:ring-offset-2"
+              className="rounded-md border border-danger/30 px-4 py-2 text-sm font-medium text-danger transition-colors hover:bg-danger/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky focus-visible:ring-offset-2"
             >
               Withdraw vouch
             </button>
@@ -76,4 +77,14 @@ export default function VouchCard({ vouch, onWithdraw }: VouchCardProps) {
       )}
     </article>
   );
+}
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }

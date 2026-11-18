@@ -85,7 +85,7 @@ export function SignInForm({
     <div className="animate-step">
       <StepHeading
         title="Welcome back"
-        description="Sign in to your DrukConnect account and get back to the community."
+        description="Sign in to your Bhutanese Marketplace account and get back to the community."
       />
 
       <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-4">
@@ -173,7 +173,7 @@ export function SignInForm({
             <Link href="/auth/vouch-recovery" className="font-medium text-ink underline underline-offset-4">Click here.</Link>
           </p>
           <p className="mt-5 text-center text-[13.5px] text-faint">
-            New to DrukConnect?{" "}
+            New to Bhutanese Marketplace?{" "}
             <Link
               href="/signup"
               className="font-medium text-ink underline decoration-line-strong underline-offset-[3px] transition hover:decoration-ink"

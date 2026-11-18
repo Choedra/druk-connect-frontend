@@ -1,7 +1,5 @@
 "use client";
 
-import { UserAvatar } from "@/src/shared/ui/UserAvatar";
-
 import { formatAvailabilityDays } from "../../listing/utils/availability";
 
 import {
@@ -37,6 +35,7 @@ import type {
 import { ReviewForm } from "../../reviews/ui/ReviewForm";
 import { useReportScam } from "../../listing/hooks/useReportScam";
 import ReportScamModal from "./ReportScamModal";
+import { getCategoryMeta } from "../../listing/constants/categories";
 
 type ServiceDetailProps = {
   listing: ListingDetails;
@@ -190,8 +189,9 @@ export function BuyerServiceDetail({
 
   return (
     <>
-      <main className="min-h-screen bg-background">
-        <div className="mx-auto max-w-7xl px-5 pb-16 pt-8 sm:px-8 lg:px-10 lg:pb-24">
+      {/* The buyer dashboard layout provides <main>, padding and page width. */}
+      <div className="font-landing">
+        <div className="pb-16 lg:pb-20">
           <ServiceBreadcrumb listing={listing} />
           {reviewError && (
             <p
@@ -266,6 +266,7 @@ export function BuyerServiceDetail({
               <ServiceGallery
                 images={images}
                 title={listing.listingTitle}
+                category={listing.listingCategory}
                 activeImage={activeImage}
                 onImageChange={setActiveImage}
               />
@@ -281,7 +282,7 @@ export function BuyerServiceDetail({
               <ReviewsSection listing={listing} />
             </div>
 
-            <aside className="lg:sticky lg:top-24">
+            <aside className="flex flex-col gap-4 lg:sticky lg:top-24">
               <ProviderCard
                 listing={listing}
                 onContact={handleWhatsAppContacted}
@@ -292,7 +293,7 @@ export function BuyerServiceDetail({
             </aside>
           </div>
         </div>
-      </main>
+      </div>
 
       {(showReviewPrompt || (contactReturn && !invitationDismissed)) &&
         eligibility.data?.canReview &&
@@ -536,18 +537,26 @@ function ReviewsSection({ listing }: { listing: ListingDetails }) {
 function ServiceGallery({
   images,
   title,
+  category,
   activeImage,
   onImageChange,
 }: {
   images: ListingImage[];
   title: string;
+  category: string;
   activeImage: number;
   onImageChange: (index: number) => void;
 }) {
   const imageUrls = images.map((image) => getImageUrl(image.imageUrl));
 
   if (!imageUrls.length) {
-    return <div className="aspect-[16/9] rounded-md bg-brand-tint" />;
+    const meta = getCategoryMeta(category);
+    const Icon = meta.icon;
+    return (
+      <div className={`grid aspect-video place-items-center rounded-3xl ${meta.tile}`}>
+        <Icon className="h-16 w-16 opacity-80" strokeWidth={1.4} aria-hidden="true" />
+      </div>
+    );
   }
 
   const safeActiveImage = activeImage < imageUrls.length ? activeImage : 0;
@@ -684,7 +693,7 @@ function ProviderCard({
   return (
     <div className="rounded-md border border-line bg-surface p-6">
       <div className="flex items-center gap-3.5">
-        <ProviderAvatar name={lister.name} imageUrl={lister.profileImageUrl} />
+        <ProviderAvatar name={lister.name} />
 
         <div className="min-w-0">
           <h2 className="font-serif text-lg font-medium text-ink">
@@ -727,7 +736,7 @@ function ProviderCard({
         <button
           type="button"
           onClick={handleWhatsAppClick}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-brand"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-sky px-4 text-[15px] font-semibold text-white shadow-[0_8px_20px_-10px_rgba(47,111,237,0.7)] transition-colors duration-200 hover:bg-sky-dark"
         >
           <MessageCircle className="h-4 w-4" />
           Message on WhatsApp
@@ -786,7 +795,7 @@ function VouchSummary({
               {vouches.slice(0, 3).map((vouch, index) => (
                 <VouchAvatar
                   key={vouch.vouchId}
-                  name={vouch.voucherName} imageUrl={vouch.profileImageUrl}
+                  name={vouch.voucherName}
                   className={index > 0 ? "-ml-2" : ""}
                 />
               ))}
@@ -808,7 +817,7 @@ function VouchSummary({
         >
           {vouches.map((vouch) => (
             <li key={vouch.vouchId} className="flex items-center gap-2.5">
-              <VouchAvatar name={vouch.voucherName} imageUrl={vouch.profileImageUrl} />
+              <VouchAvatar name={vouch.voucherName} />
               <span className="text-xs font-medium text-ink">
                 {vouch.voucherName}
               </span>
@@ -978,12 +987,29 @@ function BookingNotice() {
 /* Small UI components                                                         */
 /* -------------------------------------------------------------------------- */
 
-function ProviderAvatar({ name, imageUrl }: { name: string; imageUrl?: string | null }) {
-  return <UserAvatar name={name} imageUrl={imageUrl} size={56} className="ring-2 ring-brand-tint" />;
+function ProviderAvatar({ name }: { name: string }) {
+  return (
+    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-tint text-sm font-semibold text-brand ring-2 ring-brand-tint">
+      {getInitials(name)}
+    </div>
+  );
 }
 
-function VouchAvatar({ name, imageUrl, className = "" }: { name: string; imageUrl?: string | null; className?: string }) {
-  return <UserAvatar name={name} imageUrl={imageUrl} size={24} className={`border-2 border-jade-tint ${className}`} />;
+function VouchAvatar({
+  name,
+  className = "",
+}: {
+  name: string;
+  className?: string;
+}) {
+  return (
+    <div
+      title={name}
+      className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-jade-tint bg-surface text-[8px] font-bold text-jade ${className}`}
+    >
+      {getInitials(name)}
+    </div>
+  );
 }
 
 function RatingSummary({
@@ -1046,9 +1072,8 @@ function ReviewCard({ review }: { review: ListingReview }) {
     <article className="border-b border-line py-5 last:border-b-0">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
-          <UserAvatar name={review.reviewerName ?? review.reviewer ?? "Reviewer"} imageUrl={review.profileImageUrl} size={36} />
           <span className="text-sm font-semibold text-ink">
-            {review.reviewerName ?? review.reviewer ?? "Anonymous"}
+            {review.reviewerName ?? "Anonymous"}
           </span>
 
           {typeof review.rating === "number" && (
@@ -1144,7 +1169,14 @@ function getImageUrl(imageUrl: string) {
   return `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`;
 }
 
-
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+}
 
 function getReviewKey(review: ListingReview, index: number) {
   return (

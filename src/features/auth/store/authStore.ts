@@ -17,7 +17,6 @@ interface AuthState {
   hydrated: boolean;
 
   setSession: (session: AuthSession) => void;
-  updateUser: (user: LoginUser) => void;
   clearSession: () => void;
   setHydrated: (hydrated: boolean) => void;
 }
@@ -45,8 +44,6 @@ export const useAuthStore = create<AuthState>()(
           refreshTokenExpiresAt: session.refreshTokenExpiresAt,
           isAuthenticated: true,
         }),
-
-      updateUser: (user) => set((state) => state.user?.id === user.id ? { user } : {}),
 
       clearSession: () =>
         set({

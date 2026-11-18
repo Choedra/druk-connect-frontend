@@ -15,6 +15,7 @@ import {
 import { usePendingAppeals } from "./hooks/usePendingAppeals";
 import { useModerateAppeal } from "./hooks/useModerateAppeal";
 import type { AppealModerationAction } from "./types/adminAppeal";
+import { PageHeader, buttonSecondary } from "@/src/shared/dashboard/PageHeader";
 
 const PAGE_SIZE = 10;
 const MAX_REASON_LENGTH = 3000;
@@ -40,8 +41,8 @@ function shortenId(id: string | null) {
 function Metadata({ label, value }: { label: string; value: string | null }) {
   return (
     <div className="min-w-0">
-      <p className="text-xs font-medium text-gray-500">{label}</p>
-      <p className="mt-1 break-all text-sm text-gray-800">{value || "N/A"}</p>
+      <p className="text-xs font-medium text-muted">{label}</p>
+      <p className="mt-1 break-all text-sm text-ink">{value || "N/A"}</p>
     </div>
   );
 }
@@ -115,12 +116,12 @@ export default function PendingAppeals() {
   if (isPending) {
     return (
       <section className="space-y-4" aria-label="Loading pending appeals">
-        <div className="h-8 w-56 animate-pulse rounded bg-gray-200" />
+        <div className="h-8 w-56 animate-pulse rounded bg-line" />
 
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
-            className="h-48 animate-pulse rounded-xl border border-gray-200 bg-gray-100"
+            className="h-48 animate-pulse rounded-xl border border-line bg-line/60"
           />
         ))}
       </section>
@@ -164,55 +165,41 @@ export default function PendingAppeals() {
 
   return (
     <section className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Appeal management
-          </h1>
-
-          <p className="mt-1 text-sm text-gray-500">
-            Review and moderate appeals submitted by restricted listers.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => refetch()}
-          disabled={isFetching}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <RefreshCw
-            className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
-          />
-          Refresh
-        </button>
-      </div>
+      <PageHeader
+        title="Appeal management"
+        description="Review and moderate appeals submitted by restricted listers."
+        actions={
+          <button type="button" onClick={() => refetch()} disabled={isFetching} className={buttonSecondary}>
+            <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} aria-hidden="true" />
+            Refresh
+          </button>
+        }
+      />
 
       {/* Summary */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-gray-200 bg-white p-5">
+        <div className="rounded-xl border border-line bg-white p-5">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-amber-100 p-2">
               <Clock3 className="h-5 w-5 text-amber-700" />
             </div>
 
             <div>
-              <p className="text-sm text-gray-500">Pending appeals</p>
-              <p className="text-2xl font-bold text-gray-900">{totalPending}</p>
+              <p className="text-sm text-muted">Pending appeals</p>
+              <p className="text-2xl font-bold text-ink">{totalPending}</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-5">
+        <div className="rounded-xl border border-line bg-white p-5">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-blue-100 p-2">
               <FileText className="h-5 w-5 text-blue-700" />
             </div>
 
             <div>
-              <p className="text-sm text-gray-500">Current page</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm text-muted">Current page</p>
+              <p className="text-2xl font-bold text-ink">
                 {data?.currentPage ?? page} / {totalPages}
               </p>
             </div>
@@ -222,14 +209,14 @@ export default function PendingAppeals() {
 
       {/* Appeal list */}
       {appeals.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 bg-white px-6 py-14 text-center">
+        <div className="rounded-xl border border-line bg-white px-6 py-14 text-center">
           <ShieldCheck className="mx-auto h-10 w-10 text-green-600" />
 
-          <h2 className="mt-4 text-lg font-semibold text-gray-900">
+          <h2 className="mt-4 text-lg font-semibold text-ink">
             No pending appeals
           </h2>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-muted">
             There are currently no appeals waiting for review.
           </p>
         </div>
@@ -243,16 +230,16 @@ export default function PendingAppeals() {
             return (
               <article
                 key={appeal.appealId}
-                className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6"
+                className="rounded-xl border border-line bg-white p-5 shadow-sm sm:p-6"
               >
                 {/* Appeal heading */}
                 <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                   <div className="min-w-0">
-                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted">
                       Appeal ID
                     </p>
 
-                    <h2 className="mt-1 break-all font-semibold text-gray-900">
+                    <h2 className="mt-1 break-all font-semibold text-ink">
                       {appeal.appealId}
                     </h2>
                   </div>
@@ -263,12 +250,12 @@ export default function PendingAppeals() {
                 </div>
 
                 {/* Lister's appeal reason */}
-                <div className="mt-5 rounded-lg bg-gray-50 p-4">
-                  <p className="text-sm font-semibold text-gray-700">
-                    Lister's appeal reason
+                <div className="mt-5 rounded-lg bg-canvas p-4">
+                  <p className="text-sm font-semibold text-ink">
+                    Lister&apos;s appeal reason
                   </p>
 
-                  <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-gray-600">
+                  <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted">
                     {appeal.appealReason}
                   </p>
                 </div>
@@ -309,10 +296,10 @@ export default function PendingAppeals() {
                 </div>
 
                 {/* Moderation controls */}
-                <div className="mt-6 border-t border-gray-200 pt-5">
+                <div className="mt-6 border-t border-line pt-5">
                   <label
                     htmlFor={`moderation-reason-${appeal.appealId}`}
-                    className="mb-2 block text-sm font-semibold text-gray-700"
+                    className="mb-2 block text-sm font-semibold text-ink"
                   >
                     Moderation reason
                   </label>
@@ -343,10 +330,10 @@ export default function PendingAppeals() {
                         ? `moderation-error-${appeal.appealId}`
                         : undefined
                     }
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-gray-50"
+                    className="w-full rounded-lg border border-line-strong px-3 py-2 text-sm text-ink outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:bg-canvas"
                   />
 
-                  <p className="mt-1 text-right text-xs text-gray-500">
+                  <p className="mt-1 text-right text-xs text-muted">
                     {reason.length}/{MAX_REASON_LENGTH}
                   </p>
 
@@ -394,8 +381,8 @@ export default function PendingAppeals() {
 
       {/* Pagination */}
       {totalPages > 0 && (
-        <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-gray-500">
+        <div className="flex flex-col gap-3 border-t border-line pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted">
             Page {data?.currentPage ?? page} of {totalPages} · {totalPending}{" "}
             pending appeal{totalPending === 1 ? "" : "s"}
           </p>
@@ -405,7 +392,7 @@ export default function PendingAppeals() {
               type="button"
               disabled={!data?.hasPrevious || isFetching}
               onClick={() => setPage((current) => Math.max(1, current - 1))}
-              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-1 rounded-lg border border-line-strong px-3 py-2 text-sm font-medium text-ink hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-50"
             >
               <ChevronLeft className="h-4 w-4" />
               Previous
@@ -415,7 +402,7 @@ export default function PendingAppeals() {
               type="button"
               disabled={!data?.hasNext || isFetching}
               onClick={() => setPage((current) => current + 1)}
-              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-1 rounded-lg border border-line-strong px-3 py-2 text-sm font-medium text-ink hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
               <ChevronRight className="h-4 w-4" />

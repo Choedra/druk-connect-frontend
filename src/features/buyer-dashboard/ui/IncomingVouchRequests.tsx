@@ -148,7 +148,7 @@ export function IncomingVouchRequests() {
                           : "bg-background text-muted"
                       }`}
                     >
-                      {request.status}
+                      {formatStatus(request.status)}
                     </span>
                   </td>
 
@@ -200,4 +200,10 @@ export function IncomingVouchRequests() {
       </div>
     </div>
   );
+}
+
+/** "PENDING" -> "Pending", "NOT_ACCEPTED" -> "Not accepted" */
+function formatStatus(status: string) {
+  const text = status.trim().replace(/_/g, " ").toLowerCase();
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }

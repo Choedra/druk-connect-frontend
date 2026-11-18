@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Check, Search, ShieldCheck, Star, UserRound, X } from "lucide-react";
+import { PageHeader } from "@/src/shared/dashboard/PageHeader";
 
 type Vouch = {
   id: number;
@@ -145,7 +146,7 @@ export default function VouchesPage() {
 
   return (
     <div className="space-y-10">
-      <PageHeader />
+      <VouchesHeader />
 
       <RequestVouch
         search={search}
@@ -166,22 +167,12 @@ export default function VouchesPage() {
   );
 }
 
-function PageHeader() {
+function VouchesHeader() {
   return (
-    <section>
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand">
-        Your reputation
-      </p>
-
-      <h1 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
-        Vouches
-      </h1>
-
-      <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-        Build trust in the community by asking people you know to vouch for you
-        and see what others say about you.
-      </p>
-    </section>
+    <PageHeader
+      title="Vouches"
+      description="Build trust in the community by asking people you know to vouch for you and see what others say about you."
+    />
   );
 }
 
@@ -360,7 +351,7 @@ function ReputationOverview() {
         </div>
 
         <p className="mt-3 text-xs leading-5 text-muted">
-          You're building a strong reputation within the community.
+          You&apos;re building a strong reputation within the community.
         </p>
       </div>
     </section>
@@ -496,7 +487,7 @@ function HowVouchesWork() {
         <VouchStep
           number="03"
           title="Grow your reputation"
-          description="Accepted vouches become part of your public reputation on DrukConnect."
+          description="Accepted vouches become part of your public reputation on Bhutanese Marketplace."
         />
       </div>
     </section>
@@ -570,7 +561,7 @@ function VouchCard({ vouch, last }: { vouch: Vouch; last: boolean }) {
           </div>
 
           <p className="mt-3 max-w-3xl text-sm leading-6 text-muted">
-            "{vouch.message}"
+            &ldquo;{vouch.message}&rdquo;
           </p>
         </div>
       </div>

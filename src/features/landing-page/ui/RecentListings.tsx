@@ -1,254 +1,121 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
-import { ListingCard } from "./ListingCard";
-import { listings } from "../types/landing";
+import { useState } from "react";
+import { Plus, RotateCw } from "lucide-react";
 
-const containerVariants: Variants = {
-  hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-    },
-  },
-};
+import { LISTING_CITIES, type ListingCity } from "@/src/features/listing/constants/categories";
+import { useSearchListings } from "@/src/features/listing/hooks/useSearchListings";
+import { ListingCard, ListingCardSkeleton } from "./ListingCard";
 
-const headerVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 35,
-  },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.7,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-};
+type CityFilter = ListingCity | "All cities";
 
-const cardVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 35,
-    scale: 0.97,
-  },
-  show: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-};
+const PAGE_SIZE = 8;
+const itemClass = "w-[78%] shrink-0 snap-start sm:w-auto";
 
 export function RecentListings() {
-  const reduceMotion = useReducedMotion();
+  const [city, setCity] = useState<CityFilter>("All cities");
+
+  const { data, isLoading, isError, refetch, isFetching } = useSearchListings({
+    city: city === "All cities" ? undefined : city,
+    page: 1,
+    size: PAGE_SIZE,
+  });
+
+  const listings = data?.listings ?? [];
+  const servicesHref = city === "All cities" ? "/services" : `/services?city=${encodeURIComponent(city)}`;
 
   return (
-    <section className="relative overflow-hidden border-b border-line bg-surface py-20 sm:py-24 lg:py-28">
-      {/* Background atmosphere */}
-      <motion.div
-        className="pointer-events-none absolute -left-40 top-20 h-96 w-96 rounded-full bg-brand/8 blur-3xl"
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                x: [0, 25, 0],
-                y: [0, -20, 0],
-                scale: [1, 1.08, 1],
-              }
-        }
-        transition={{
-          duration: 14,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        aria-hidden="true"
-      />
-
-      <motion.div
-        className="pointer-events-none absolute -right-32 bottom-0 h-80 w-80 rounded-full bg-pine/5 blur-3xl"
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                x: [0, -25, 0],
-                y: [0, 20, 0],
-                scale: [1, 1.06, 1],
-              }
-        }
-        transition={{
-          duration: 16,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Subtle grid */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.025] [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] [background-size:48px_48px]"
-        aria-hidden="true"
-      />
-
-      <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-        {/* Section Header */}
-        <motion.div
-          variants={headerVariants}
-          initial={reduceMotion ? undefined : "hidden"}
-          whileInView={reduceMotion ? undefined : "show"}
-          viewport={{
-            once: true,
-            margin: "-100px",
-          }}
-          className="mb-12 flex flex-col justify-between gap-6 sm:mb-14 md:flex-row md:items-end lg:mb-16"
-        >
-          <div className="max-w-2xl">
-            <motion.p
-              className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-brand"
-              initial={reduceMotion ? undefined : { opacity: 0 }}
-              whileInView={reduceMotion ? undefined : { opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{
-                delay: 0.15,
-                duration: 0.5,
-              }}
-            >
-              Fresh from the community
-            </motion.p>
-
-            <h2 className="font-serif text-[36px] font-medium leading-[1.08] tracking-[-0.025em] text-ink sm:text-[44px] lg:text-[52px]">
-              Recently{" "}
-              <motion.span
-                className="inline-block text-brand"
-                initial={
-                  reduceMotion
-                    ? undefined
-                    : {
-                        opacity: 0,
-                        y: 12,
-                      }
-                }
-                whileInView={
-                  reduceMotion
-                    ? undefined
-                    : {
-                        opacity: 1,
-                        y: 0,
-                      }
-                }
-                viewport={{ once: true }}
-                transition={{
-                  delay: 0.25,
-                  duration: 0.5,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                posted.
-              </motion.span>
-            </h2>
-
-            <motion.p
-              className="mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg"
-              initial={
-                reduceMotion
-                  ? undefined
-                  : {
-                      opacity: 0,
-                      y: 15,
-                    }
-              }
-              whileInView={
-                reduceMotion
-                  ? undefined
-                  : {
-                      opacity: 1,
-                      y: 0,
-                    }
-              }
-              viewport={{ once: true }}
-              transition={{
-                delay: 0.35,
-                duration: 0.55,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              Discover the latest services, opportunities, and listings shared
-              by the Bhutanese community across Australia.
-            </motion.p>
+    <section id="listings" className="scroll-mt-20 py-20 lg:py-24">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-3xl font-extrabold tracking-[-0.03em] text-ink sm:text-4xl">Services near you</h2>
+            <p className="mt-3 text-lg text-muted">Pick your city to see what the community offers nearby.</p>
           </div>
-
-          <Link
-            href="/services"
-            className="group hidden shrink-0 items-center gap-2 rounded-md border border-line bg-background px-5 py-2.5 text-sm font-medium text-ink transition-all duration-200 hover:border-brand/40 hover:bg-brand hover:text-white md:inline-flex"
-          >
-            View all services
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          <Link href={servicesHref} className="font-semibold text-sky hover:underline hover:underline-offset-4">
+            {city === "All cities" ? "Browse all services" : `All services in ${city}`}
           </Link>
-        </motion.div>
+        </div>
 
-        {/* Listings */}
-        <motion.div
-          variants={containerVariants}
-          initial={reduceMotion ? undefined : "hidden"}
-          whileInView={reduceMotion ? undefined : "show"}
-          viewport={{
-            once: true,
-            margin: "-80px",
-          }}
-          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6"
+        <div
+          role="group"
+          aria-label="Filter by city"
+          className="no-scrollbar -mx-5 mt-8 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0"
         >
-          {listings.map((listing) => (
-            <motion.div
-              key={listing.title}
-              variants={reduceMotion ? undefined : cardVariants}
-              className="h-full"
+          {(["All cities", ...LISTING_CITIES] as CityFilter[]).map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setCity(c)}
+              aria-pressed={city === c}
+              className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                city === c ? "bg-ink text-white" : "border border-line text-muted hover:border-ink/30 hover:text-ink"
+              }`}
             >
-              <ListingCard listing={listing} />
-            </motion.div>
+              {c}
+            </button>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Mobile CTA */}
-        <motion.div
-          initial={
-            reduceMotion
-              ? undefined
-              : {
-                  opacity: 0,
-                  y: 15,
-                }
-          }
-          whileInView={
-            reduceMotion
-              ? undefined
-              : {
-                  opacity: 1,
-                  y: 0,
-                }
-          }
-          viewport={{ once: true }}
-          transition={{
-            delay: 0.4,
-            duration: 0.5,
-          }}
-          className="mt-8 sm:hidden"
-        >
-          <Link
-            href="/services"
-            className="group inline-flex items-center gap-2 text-sm font-medium text-ink transition-colors hover:text-brand"
+        {isError ? (
+          <div className="mt-8 rounded-2xl border border-line bg-canvas px-6 py-12 text-center">
+            <p className="font-semibold text-ink">Listings couldn&apos;t be loaded.</p>
+            <p className="mt-1 text-muted">Check your connection and try again.</p>
+            <button
+              type="button"
+              onClick={() => refetch()}
+              disabled={isFetching}
+              className="mt-5 inline-flex items-center gap-2 rounded-full border border-line bg-white px-5 py-2.5 font-semibold text-ink hover:border-ink/30 disabled:opacity-60"
+            >
+              <RotateCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} aria-hidden="true" />
+              Try again
+            </button>
+          </div>
+        ) : (
+          <ul
+            key={city}
+            aria-live="polite"
+            aria-busy={isLoading || isFetching}
+            className={`no-scrollbar -mx-5 mt-8 flex snap-x scroll-px-5 gap-4 overflow-x-auto px-5 pb-2 transition-opacity sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-4 lg:gap-5 ${
+              isFetching && !isLoading ? "opacity-60" : ""
+            }`}
           >
-            View all listings
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Link>
-        </motion.div>
+            {isLoading &&
+              Array.from({ length: 4 }).map((_, i) => (
+                <li key={i} className={itemClass}>
+                  <ListingCardSkeleton />
+                </li>
+              ))}
+
+            {!isLoading &&
+              listings.map((listing, i) => (
+                <li key={listing.id} className={`animate-settle ${itemClass}`} style={{ animationDelay: `${i * 50}ms` }}>
+                  <ListingCard listing={listing} />
+                </li>
+              ))}
+
+            {/* Fills the row (or replaces it when empty) with a prompt to post. */}
+            {!isLoading && listings.length < PAGE_SIZE && (
+              <li className={`${listings.length === 0 ? "sm:col-span-2 lg:col-span-4" : ""} ${itemClass}`}>
+                <Link
+                  href="/auth/signup?role=LISTER"
+                  className="flex h-full min-h-64 flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-line p-6 text-center transition-colors hover:border-sky hover:bg-sky-soft/40"
+                >
+                  <span className="grid h-12 w-12 place-items-center rounded-full bg-sky text-white">
+                    <Plus className="h-6 w-6" aria-hidden="true" />
+                  </span>
+                  <span className="font-semibold text-ink">
+                    {listings.length === 0
+                      ? `No services ${city === "All cities" ? "listed" : `in ${city}`} yet`
+                      : `Offer a service${city === "All cities" ? "" : ` in ${city}`}`}
+                  </span>
+                  <span className="text-sm text-muted">List yours for free and reach people near you</span>
+                </Link>
+              </li>
+            )}
+          </ul>
+        )}
       </div>
     </section>
   );

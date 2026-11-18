@@ -3,9 +3,11 @@
 import { useVouchRecoveryStore } from "./store/vouchRecoveryStore";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { SignInForm } from "./ui/sign-in/SignInForm";
 import { SignInBrandPanel } from "./ui/sign-in/SignInBrandPanel";
+import { BrandMark } from "./ui/Primitives";
 import { useLogin } from "./hooks/useLogin";
 import { useAuthStore } from "./store/authStore";
 import { reviewReturnPath } from "@/src/shared/routes/reviewReturnPath";
@@ -64,6 +66,14 @@ export default function SignInPage({ redirectTo }: { redirectTo?: string }) {
       <SignInBrandPanel />
 
       <section className="flex min-h-screen min-w-0 flex-1 flex-col lg:ml-[41%]">
+        {/* Mobile brand bar (the side panel is hidden below lg) */}
+        <header className="border-b border-line bg-background/85 px-6 py-4 backdrop-blur-md lg:hidden">
+          <Link href="/" aria-label="Bhutanese Marketplace home" className="inline-flex items-center gap-2.5 text-ink">
+            <BrandMark size={22} />
+            <span className="text-[18px] font-extrabold leading-none tracking-tight">Bhutanese Marketplace</span>
+          </Link>
+        </header>
+
         <div className="min-h-0 flex-1 overflow-y-auto">
           <div className="flex min-h-full justify-center px-6 pb-16 pt-8 sm:px-10 lg:px-12 lg:py-12">
             <div className="w-full max-w-110 lg:my-auto">

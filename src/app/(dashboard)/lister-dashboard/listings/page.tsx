@@ -19,6 +19,7 @@ import type { Listing } from "@/src/features/listing/types/listing";
 import { useDeleteListing } from "@/src/features/listing/hooks/useDeleteListing";
 import { useUpdateListing } from "@/src/features/listing/hooks/useUpdateListing";
 import { EditListingModal } from "@/src/features/listing/ui/EditListingModal";
+import { PageHeader, buttonPrimary } from "@/src/shared/dashboard/PageHeader";
 
 const STATUS_OPTIONS = ["All", "Active", "Draft", "Paused"];
 
@@ -77,30 +78,19 @@ export default function ListingsPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand">
-            Your workspace
-          </p>
-
-          <h1 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
-            My listings
-          </h1>
-
-          <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-            Manage the services you offer to the Bhutanese community in
-            Australia.
-          </p>
-        </div>
-
-        <Link
-          href="/lister-dashboard/listings/new"
-          className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
-        >
-          <Plus className="h-4 w-4" />
-          Create listing
-        </Link>
-      </section>
+      <PageHeader
+        title="My listings"
+        description="Manage the services you offer to the Bhutanese community in Australia."
+        actions={
+          <Link
+            href="/lister-dashboard/listings/new"
+            className={buttonPrimary}
+            >
+            <Plus className="h-4 w-4" />
+            Create listing
+            </Link>
+        }
+      />
 
       {/* Toolbar */}
       <section className="border-y border-line py-4">

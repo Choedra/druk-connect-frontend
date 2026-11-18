@@ -21,9 +21,9 @@ const OVERSEAS_COUNTRIES = "[COUNTRIES]";
 const RETENTION_PERIOD = "[RETENTION PERIOD]";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — DrukConnect",
+  title: "Privacy Policy — Bhutanese Marketplace",
   description:
-    "What personal information DrukConnect collects, how we use it, who can see it, and how to access or delete it.",
+    "What personal information Bhutanese Marketplace collects, how we use it, who can see it, and how to access or delete it.",
 };
 
 /* ------------------------------------------------------------------ */
@@ -97,10 +97,10 @@ const SECTIONS: Section[] = [
     title: "Who we are and what this policy covers",
     paragraphs: [
       <>
-        DrukConnect is operated by <Value value={OPERATOR_NAME} />{" "}
+        Bhutanese Marketplace is operated by <Value value={OPERATOR_NAME} />{" "}
         (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;the Platform&rdquo;). This
         Privacy Policy explains how we collect, use, disclose, and protect
-        personal information when you browse DrukConnect, create an account,
+        personal information when you browse Bhutanese Marketplace, create an account,
         post a Listing, contact another member, leave a review, or vouch for
         someone.
       </>,
@@ -221,7 +221,7 @@ const SECTIONS: Section[] = [
         ). They may only use it to provide their services to us.
       </>,
       "Law enforcement, regulators, or courts, where required or authorised by law, or where we reasonably believe disclosure is necessary to prevent serious harm.",
-      "A buyer or successor, if DrukConnect is sold, merged, or restructured, subject to this policy continuing to apply.",
+      "A buyer or successor, if Bhutanese Marketplace is sold, merged, or restructured, subject to this policy continuing to apply.",
       "Anyone else, with your consent.",
     ],
   },
@@ -244,7 +244,7 @@ const SECTIONS: Section[] = [
     id: "cookies",
     title: "Cookies and analytics",
     paragraphs: [
-      "We use essential cookies to keep you signed in and keep the Platform secure. We may also use analytics cookies to understand how people use DrukConnect. You can block or delete cookies in your browser settings, but some features, such as staying signed in, may not work without them.",
+      "We use essential cookies to keep you signed in and keep the Platform secure. We may also use analytics cookies to understand how people use Bhutanese Marketplace. You can block or delete cookies in your browser settings, but some features, such as staying signed in, may not work without them.",
     ],
   },
   {
@@ -292,7 +292,7 @@ const SECTIONS: Section[] = [
     id: "age",
     title: "Age requirement",
     paragraphs: [
-      "DrukConnect is intended for people aged 18 and over. We do not knowingly collect personal information from anyone under 18. If you believe a minor has created an account, please contact us and we will remove it.",
+      "Bhutanese Marketplace is intended for people aged 18 and over. We do not knowingly collect personal information from anyone under 18. If you believe a minor has created an account, please contact us and we will remove it.",
     ],
   },
   {

@@ -10,6 +10,7 @@ import {
   UserRound,
   X,
 } from "lucide-react";
+import { PageHeader } from "@/src/shared/dashboard/PageHeader";
 
 type RequestStatus = "NEW" | "ACCEPTED" | "DECLINED";
 
@@ -134,20 +135,10 @@ export default function RequestsPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <section>
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand">
-          Activity
-        </p>
-
-        <h1 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
-          Requests
-        </h1>
-
-        <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-          Review enquiries from people interested in your services and respond
-          to requests from the community.
-        </p>
-      </section>
+      <PageHeader
+        title="Requests"
+        description="Review enquiries from people interested in your services and respond to requests from the community."
+      />
 
       {/* Toolbar */}
       <section className="border-y border-line py-4">

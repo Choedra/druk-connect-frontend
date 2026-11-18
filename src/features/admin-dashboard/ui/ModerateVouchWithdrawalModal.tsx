@@ -46,16 +46,16 @@ export default function ModerateVouchWithdrawalModal({
         aria-labelledby="moderate-vouch-title"
         className="w-full max-w-lg rounded-2xl bg-white shadow-xl"
       >
-        <div className="flex items-start justify-between border-b border-gray-100 px-6 py-5">
+        <div className="flex items-start justify-between border-b border-line px-6 py-5">
           <div>
             <h2
               id="moderate-vouch-title"
-              className="text-lg font-semibold text-[#1C2541]"
+              className="text-lg font-semibold text-ink"
             >
               Review withdrawal
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-muted">
               Review the request before confirming your decision.
             </p>
           </div>
@@ -65,39 +65,39 @@ export default function ModerateVouchWithdrawalModal({
             onClick={onClose}
             disabled={isSubmitting}
             aria-label="Close"
-            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg p-1.5 text-faint transition-colors hover:bg-line/60 hover:text-muted disabled:cursor-not-allowed disabled:opacity-50"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         <div className="space-y-5 px-6 py-5">
-          <div className="rounded-xl bg-gray-50 p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+          <div className="rounded-xl bg-canvas p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-faint">
               Withdrawal request
             </p>
 
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
               <div>
-                <p className="text-xs text-gray-400">Buyer</p>
+                <p className="text-xs text-faint">Buyer</p>
 
-                <p className="mt-1 text-sm font-medium text-[#1C2541]">
+                <p className="mt-1 text-sm font-medium text-ink">
                   {request.buyerName}
                 </p>
 
-                <p className="mt-0.5 text-xs text-gray-500">
+                <p className="mt-0.5 text-xs text-muted">
                   {request.buyerEmail}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs text-gray-400">Lister</p>
+                <p className="text-xs text-faint">Lister</p>
 
-                <p className="mt-1 text-sm font-medium text-[#1C2541]">
+                <p className="mt-1 text-sm font-medium text-ink">
                   {request.listerName}
                 </p>
 
-                <p className="mt-0.5 text-xs text-gray-500">
+                <p className="mt-0.5 text-xs text-muted">
                   {request.listerEmail}
                 </p>
               </div>
@@ -105,11 +105,11 @@ export default function ModerateVouchWithdrawalModal({
           </div>
 
           <div>
-            <p className="mb-2 text-sm font-medium text-[#1C2541]">
-              Buyer's reason
+            <p className="mb-2 text-sm font-medium text-ink">
+              Buyer&apos;s reason
             </p>
 
-            <div className="rounded-xl border border-gray-200 bg-white p-3 text-sm leading-6 text-gray-600">
+            <div className="rounded-xl border border-line bg-white p-3 text-sm leading-6 text-muted">
               {request.reason}
             </div>
           </div>
@@ -117,7 +117,7 @@ export default function ModerateVouchWithdrawalModal({
           <div>
             <label
               htmlFor="moderation-reason"
-              className="mb-2 block text-sm font-medium text-[#1C2541]"
+              className="mb-2 block text-sm font-medium text-ink"
             >
               Admin reason
             </label>
@@ -129,7 +129,7 @@ export default function ModerateVouchWithdrawalModal({
               placeholder="Add a reason for your decision..."
               rows={4}
               disabled={isSubmitting}
-              className="w-full resize-none rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#1C2541] outline-none transition placeholder:text-gray-400 focus:border-[#7A2E33] focus:ring-2 focus:ring-[#7A2E33]/10 disabled:cursor-not-allowed disabled:bg-gray-50"
+              className="w-full resize-none rounded-xl border border-line px-3 py-2.5 text-sm text-ink outline-none transition placeholder:text-faint focus:border-sky focus:ring-2 focus:ring-sky/10 disabled:cursor-not-allowed disabled:bg-canvas"
             />
           </div>
 
@@ -142,12 +142,12 @@ export default function ModerateVouchWithdrawalModal({
           )}
         </div>
 
-        <div className="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
+        <div className="flex justify-end gap-3 border-t border-line px-6 py-4">
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg px-4 py-2 text-sm font-medium text-muted transition-colors hover:bg-line/60 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
           </button>
@@ -156,7 +156,7 @@ export default function ModerateVouchWithdrawalModal({
             type="button"
             onClick={() => handleSubmit("REJECT")}
             disabled={!reason.trim() || isSubmitting}
-            className="rounded-lg bg-[#7A2E33] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#68272C] disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-danger px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-danger/90 rounded-full disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? "Submitting..." : "Reject withdrawal"}
           </button>
@@ -165,7 +165,7 @@ export default function ModerateVouchWithdrawalModal({
             type="button"
             onClick={() => handleSubmit("APPROVE")}
             disabled={!reason.trim() || isSubmitting}
-            className="flex items-center gap-2 rounded-lg bg-[#2F4F3E] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#264235] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 bg-pine px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-pine/90 rounded-full disabled:cursor-not-allowed disabled:opacity-50"
           >
             <CheckCircle2 className="h-4 w-4" />
 

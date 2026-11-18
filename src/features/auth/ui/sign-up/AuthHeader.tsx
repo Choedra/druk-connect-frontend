@@ -15,12 +15,12 @@ export function AuthHeader({ step }: AuthHeaderProps) {
         <Link
           href="/"
           className="flex items-center gap-2.5 rounded-lg text-ink"
-          aria-label="DrukConnect home"
+          aria-label="Bhutanese Marketplace home"
         >
           <BrandMark size={22} />
 
-          <span className="font-serif text-[18px] font-medium leading-none tracking-[-0.015em]">
-            DrukConnect
+          <span className="text-[18px] font-extrabold leading-none tracking-tight">
+            Bhutanese Marketplace
           </span>
         </Link>
 

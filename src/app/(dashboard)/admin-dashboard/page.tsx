@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { useAdminDashboard } from "@/src/features/admin-dashboard/hooks/useAdminDashboard";
+import { PageHeader, buttonPrimary } from "@/src/shared/dashboard/PageHeader";
 
 const QUICK_ACTIONS = [
   {
@@ -36,7 +37,7 @@ const QUICK_ACTIONS = [
   {
     title: "View reports",
     description: "Review reported content and activity.",
-    href: "/admin-dashboard/reports",
+    href: "/admin-dashboard/scam-reports",
     icon: ClipboardList,
   },
 ];
@@ -47,14 +48,7 @@ export default function DashboardPage() {
   if (isPending) {
     return (
       <div className="space-y-6">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand">
-            Admin dashboard
-          </p>
-          <h1 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
-            Platform overview.
-          </h1>
-        </div>
+        <PageHeader title="Platform overview" />
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
@@ -146,7 +140,7 @@ export default function DashboardPage() {
       description: "Withdrawal requests awaiting review.",
       value: data.pendingVouchWithdrawalCount,
       action: "Manage vouches",
-      href: "/admin-dashboard/vouches",
+      href: "/admin-dashboard/vouch-withdrawals",
       icon: ShieldCheck,
     },
     {
@@ -154,7 +148,7 @@ export default function DashboardPage() {
       description: "Reports that need investigation.",
       value: data.pendingScamReportCount,
       action: "View reports",
-      href: "/admin-dashboard/reports",
+      href: "/admin-dashboard/scam-reports",
       icon: MessageSquare,
     },
     {
@@ -177,31 +171,16 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-10">
-      {/* Header */}
-      <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand">
-            Admin dashboard
-          </p>
-
-          <h1 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
-            Platform overview.
-          </h1>
-
-          <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-            Monitor marketplace activity, manage community content, and keep
-            DrukConnect running smoothly.
-          </p>
-        </div>
-
-        <Link
-          href="/admin-dashboard/reviews"
-          className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
-        >
-          <ShieldCheck className="h-4 w-4" />
-          Review activity
-        </Link>
-      </section>
+      <PageHeader
+        title="Platform overview"
+        description="Monitor marketplace activity, manage community content, and keep Bhutanese Marketplace running smoothly."
+        actions={
+          <Link href="/admin-dashboard/reviews" className={buttonPrimary}>
+            <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+            Review activity
+          </Link>
+        }
+      />
 
       {/* Platform analytics */}
       <section>
@@ -214,7 +193,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {platformStats.map((stat) => (
             <AdminStatCard
               key={stat.label}
@@ -255,7 +234,7 @@ export default function DashboardPage() {
               <Link
                 key={action.title}
                 href={action.href}
-                className="group flex items-center justify-between border border-line px-4 py-3 transition-colors hover:border-brand hover:bg-brand-tint"
+                className="group flex items-center justify-between rounded-xl border border-line px-4 py-3 transition-colors hover:border-brand hover:bg-brand-tint"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <action.icon className="h-4 w-4 shrink-0 text-brand" />
@@ -359,7 +338,7 @@ export default function DashboardPage() {
           </h2>
 
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-            Access the main areas of the DrukConnect administration panel.
+            Access the main areas of the Bhutanese Marketplace administration panel.
           </p>
         </div>
 
@@ -409,7 +388,7 @@ function AdminStatCard({
   icon: typeof Users;
 }) {
   return (
-    <div className="bg-surface p-5">
+    <div className="rounded-2xl border border-line bg-white p-5">
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
           {label}
@@ -526,7 +505,7 @@ function AdminManagementLink({
   return (
     <Link
       href={href}
-      className="group border border-line p-4 transition-colors hover:border-brand hover:bg-brand-tint"
+      className="group rounded-xl border border-line p-4 transition-colors hover:border-brand hover:bg-brand-tint"
     >
       <div className="flex items-center justify-between gap-3">
         <Icon className="h-4 w-4 text-brand" />

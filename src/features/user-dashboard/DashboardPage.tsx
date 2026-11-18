@@ -19,7 +19,7 @@ export default function DashboardPage() {
       <div className="mx-auto max-w-4xl">
         <div className="flex items-center justify-between border-b border-line pb-5">
           <div>
-            <p className="font-serif text-2xl font-medium">DrukConnect</p>
+            <p className="font-serif text-2xl font-medium">Bhutanese Marketplace</p>
             <p className="mt-1 text-sm text-faint">Dashboard</p>
           </div>
 

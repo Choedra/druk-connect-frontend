@@ -12,6 +12,7 @@ import VouchesError from "./VouchesError";
 import EmptyVouches from "./EmptyVouches";
 import WithdrawVouchModal from "./WithdrawVouchModal";
 import VouchCard from "./VouchCard";
+import { PageHeader } from "@/src/shared/dashboard/PageHeader";
 
 export default function ManageVouchesPage() {
   const { data, isLoading, isError, error } = useGivenVouches();
@@ -81,16 +82,10 @@ export default function ManageVouchesPage() {
   return (
     <>
       <div className="space-y-8">
-        {/* Page header */}
-        <header>
-          <h1 className="font-serif text-3xl font-medium tracking-tight text-ink">
-            Manage vouches
-          </h1>
-
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-            Manage the people you have vouched for in the community.
-          </p>
-        </header>
+        <PageHeader
+          title="Manage vouches"
+          description="Manage the people you have vouched for in the community."
+        />
 
         {/* Summary */}
         <section
@@ -98,16 +93,16 @@ export default function ManageVouchesPage() {
           className="relative overflow-hidden rounded-md border border-line bg-white p-4 sm:p-5"
         >
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#7A2E33]/10">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-sky-soft">
               <ShieldCheck
                 aria-hidden="true"
-                className="h-5 w-5 text-[#7A2E33]"
+                className="h-5 w-5 text-sky"
               />
             </div>
 
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-muted">
-                People you've vouched for
+                People you&apos;ve vouched for
               </p>
               <p className="mt-1 text-2xl font-semibold leading-none tracking-tight text-ink">
                 {totalVouchedUsers}
@@ -132,7 +127,7 @@ export default function ManageVouchesPage() {
             </h2>
 
             <p className="mt-1 text-sm leading-6 text-muted">
-              People you've vouched for as a trusted member.
+              People you&apos;ve vouched for as a trusted member.
             </p>
           </div>
 

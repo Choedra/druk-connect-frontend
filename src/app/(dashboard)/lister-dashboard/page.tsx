@@ -4,69 +4,18 @@ import Link from "next/link";
 import { ArrowRight, Plus } from "lucide-react";
 
 import { ReputationCard } from "@/src/features/lister-dashboard/ui/ReputationCard";
-import { RequestCard } from "@/src/features/lister-dashboard/ui/RequestCard";
 import { StatCard } from "@/src/features/lister-dashboard/ui/StatCard";
-import { ListingCard } from "@/src/features/lister-dashboard/ui/ListingCard";
+import { ListingCard, ListingCardSkeleton } from "@/src/features/landing-page/ui/ListingCard";
+import { useMyListings } from "@/src/features/listing/hooks/useMyListings";
 import { useListerDashboard } from "@/src/features/lister-dashboard/hooks/useListerDashboard";
-
-const LISTINGS = [
-  {
-    id: 1,
-    title: "Bhutanese Catering",
-    category: "Food",
-    location: "Melbourne, VIC",
-    price: "$25",
-    priceUnit: "per person",
-    views: 42,
-    status: "ACTIVE" as const,
-    image:
-      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=900&q=80",
-  },
-  {
-    id: 2,
-    title: "Airport Pickup",
-    category: "Transport",
-    location: "Sydney, NSW",
-    price: "$40",
-    priceUnit: "per trip",
-    views: 31,
-    status: "ACTIVE" as const,
-    image:
-      "https://images.unsplash.com/photo-1517840901100-8179e982acb7?w=900&q=80",
-  },
-  {
-    id: 3,
-    title: "Maths & Science Tutoring",
-    category: "Tutoring",
-    location: "Brisbane, QLD",
-    price: "$30",
-    priceUnit: "per hour",
-    views: 18,
-    status: "DRAFT" as const,
-    image:
-      "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=900&q=80",
-  },
-];
-
-const REQUESTS = [
-  {
-    name: "Pema Dorji",
-    listing: "Bhutanese Catering",
-    message:
-      "Hi, I need catering for around 30 people for a family gathering next weekend.",
-    time: "2h ago",
-  },
-  {
-    name: "Karma Wangchuk",
-    listing: "Airport Pickup",
-    message:
-      "Would you be available for an airport pickup from Sydney Airport this Saturday?",
-    time: "Yesterday",
-  },
-];
+import { PageHeader, SectionHeader, buttonPrimary } from "@/src/shared/dashboard/PageHeader";
+import { useAuthStore } from "@/src/features/auth/store/authStore";
 
 export default function DashboardPage() {
+  const firstName = useAuthStore((state) => state.user?.firstName);
   const { data, isLoading, isError, error } = useListerDashboard();
+  const myListings = useMyListings();
+  const recentListings = (myListings.data?.listings ?? []).slice(0, 4);
 
   const formatNumber = (value: number | undefined) =>
     value === undefined ? "—" : value.toLocaleString();
@@ -76,30 +25,19 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-10">
-      <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand">
-            Lister dashboard
-          </p>
-
-          <h1 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
-            Good morning, Tashi.
-          </h1>
-
-          <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-            Manage your listings, respond to buyers, and build your reputation
-            in the community.
-          </p>
-        </div>
-
-        <Link
-          href="/lister-dashboard/listings/new"
-          className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-brand px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
-        >
-          <Plus className="h-4 w-4" />
-          Create listing
-        </Link>
-      </section>
+      <PageHeader
+        title={`Welcome back${firstName ? `, ${firstName}` : ""}`}
+        description="Manage your listings, respond to buyers, and build your reputation in the community."
+        actions={
+          <Link
+            href="/lister-dashboard/listings/new"
+            className={buttonPrimary}
+            >
+            <Plus className="h-4 w-4" />
+            Create listing
+            </Link>
+        }
+      />
 
       {isError && (
         <div
@@ -112,7 +50,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <section className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Active listings"
           value={isLoading ? "..." : formatNumber(data?.activeListings)}
@@ -151,65 +89,55 @@ export default function DashboardPage() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
-        <div className="border border-line bg-surface p-6">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-faint">
-                Activity
-              </p>
+        <div>
+          <SectionHeader
+            title="Your listings"
+            description="The services you offer to the community."
+            actions={
+              <Link
+                href="/lister-dashboard/listings"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-sky hover:underline hover:underline-offset-4"
+              >
+                View all
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            }
+          />
 
-              <h2 className="mt-2 font-serif text-xl font-medium tracking-tight text-ink">
-                Recent requests
-              </h2>
+          {myListings.isPending ? (
+            <ul className="grid gap-5 sm:grid-cols-2" aria-busy="true">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <li key={i}>
+                  <ListingCardSkeleton />
+                </li>
+              ))}
+            </ul>
+          ) : recentListings.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-line bg-white px-6 py-12 text-center">
+              <p className="font-semibold text-ink">You haven&apos;t listed a service yet</p>
+              <p className="mt-1 text-sm text-muted">List one and people in your city can find you.</p>
+              <Link href="/lister-dashboard/listings/new" className={`${buttonPrimary} mt-5`}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                Create listing
+              </Link>
             </div>
-
-            <Link
-              href="/lister-dashboard/requests"
-              className="text-xs font-semibold text-brand hover:text-brand-dark"
-            >
-              View all
-            </Link>
-          </div>
-
-          <div className="mt-6">
-            {REQUESTS.map((request) => (
-              <RequestCard
-                key={`${request.name}-${request.time}`}
-                {...request}
-              />
-            ))}
-          </div>
+          ) : (
+            <ul className="grid gap-5 sm:grid-cols-2">
+              {recentListings.map((listing) => (
+                <li key={listing.id}>
+                  <ListingCard listing={{ ...listing, cuisine: "", listerName: "" }} />
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
-        <ReputationCard />
-      </section>
-
-      <section>
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-faint">
-              Your listings
-            </p>
-
-            <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-ink">
-              Manage your services
-            </h2>
-          </div>
-
-          <Link
-            href="/lister-dashboard/listings"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:text-brand-dark"
-          >
-            View all
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-
-        <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {LISTINGS.map((listing) => (
-            <ListingCard key={listing.id} {...listing} />
-          ))}
-        </div>
+        <ReputationCard
+          loading={isLoading}
+          averageRating={data?.averageRating}
+          reviewCount={data?.approvedReviewCount}
+          vouchCount={data?.activeVouchCount}
+        />
       </section>
     </div>
   );

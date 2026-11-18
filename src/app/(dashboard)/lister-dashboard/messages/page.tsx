@@ -11,6 +11,7 @@ import {
   Send,
   UserRound,
 } from "lucide-react";
+import { PageHeader } from "@/src/shared/dashboard/PageHeader";
 
 type Message = {
   id: number;
@@ -203,20 +204,10 @@ export default function MessagesPage() {
   return (
     <div className="space-y-8">
       {/* Page heading */}
-      <section>
-        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand">
-          Communication
-        </p>
-
-        <h1 className="mt-2 font-serif text-3xl font-medium tracking-tight text-ink sm:text-4xl">
-          Messages
-        </h1>
-
-        <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-          Keep conversations with people interested in your services in one
-          place.
-        </p>
-      </section>
+      <PageHeader
+        title="Messages"
+        description="Keep conversations with people interested in your services in one place."
+      />
 
       {/* Messages workspace */}
       <section className="overflow-hidden border border-line bg-surface">
