@@ -6,6 +6,7 @@ import { AlertCircle, Inbox } from "lucide-react";
 import { useRespondToVouchRequest } from "../hooks/useRespondToVouchRequest";
 import { useIncomingVouchRequests } from "../hooks/useIncomingVouchRequests";
 import VouchRequestSkeleton from "./VouchRequestSkeleton";
+import { VoucherTermsNotice } from "@/src/features/legal/VoucherTermsNotice";
 
 type RespondingState = {
   requestId: string;
@@ -88,6 +89,7 @@ export function IncomingVouchRequests() {
           <p className="mt-1 text-xs text-muted">
             Review and respond to vouch requests.
           </p>
+          <VoucherTermsNotice className="mt-1" />
         </div>
 
         <span className="shrink-0 text-sm text-muted">

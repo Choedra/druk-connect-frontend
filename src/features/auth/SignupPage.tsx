@@ -217,6 +217,7 @@ export default function SignupPage() {
               {/* STEP 1 — Account Details */}
               {step === 1 && (
                 <AccountDetails
+                  role={role}
                   onNext={handleAccountDetails}
                   isLoading={isSigningUp}
                   serverErrors={serverErrors}
@@ -240,12 +241,12 @@ export default function SignupPage() {
 
               {/* STEP 3 — Buyer Finish */}
               {step === 3 && role === "BUYER" && (
-                <AgreeFinish onFinish={handleFinish} />
+                <AgreeFinish onFinish={handleFinish} role={role} />
               )}
 
               {/* STEP 4 — Lister Finish */}
               {step === 4 && role === "LISTER" && (
-                <AgreeFinish onFinish={handleFinish} />
+                <AgreeFinish onFinish={handleFinish} role={role} />
               )}
             </div>
           </div>

@@ -31,7 +31,8 @@ export function Header() {
   const hydrated = useAuthStore((s) => s.hydrated);
   const signedIn = hydrated && isAuthenticated && user;
 
-  const isActive = (href: string) => !href.includes("#") && pathname.startsWith(href);
+  const isActive = (href: string) =>
+    !href.includes("#") && pathname.startsWith(href);
 
   return (
     <header className="sticky top-0 z-30 border-b border-line/80 bg-white/85 font-landing backdrop-blur-md">
@@ -64,8 +65,17 @@ export function Header() {
             </Link>
           ) : (
             <>
-              <Link href={LINKS.signIn} className="rounded-full px-4 py-2 text-[0.93rem] font-semibold text-ink hover:bg-canvas">
+              <Link
+                href={LINKS.signIn}
+                className="rounded-full px-4 py-2 text-[0.93rem] font-semibold text-ink hover:bg-canvas"
+              >
                 Sign in
+              </Link>
+              <Link
+                href={LINKS.signUpBuyer}
+                className="rounded-full border border-line px-4.5 py-2.5 text-[0.93rem] font-semibold text-ink transition-colors hover:border-ink/30 hover:bg-canvas"
+              >
+                Sign up to vouch
               </Link>
               <Link
                 href={LINKS.signUpLister}
@@ -91,7 +101,10 @@ export function Header() {
       </div>
 
       {open && (
-        <div id="mobile-menu" className="border-t border-line bg-white px-5 pb-5 pt-2 sm:px-8 lg:hidden">
+        <div
+          id="mobile-menu"
+          className="border-t border-line bg-white px-5 pb-5 pt-2 sm:px-8 lg:hidden"
+        >
           <nav aria-label="Mobile" className="flex flex-col">
             {NAV_LINKS.map((l) => (
               <Link
@@ -113,14 +126,23 @@ export function Header() {
             </Link>
           ) : (
             <div className="mt-3 grid gap-2">
-              <Link href={LINKS.signUpLister} className="rounded-full bg-sky px-4 py-2.5 text-center font-semibold text-white">
+              <Link
+                href={LINKS.signUpLister}
+                className="rounded-full bg-sky px-4 py-2.5 text-center font-semibold text-white"
+              >
                 List your service
               </Link>
               <div className="grid grid-cols-2 gap-2">
-                <Link href={LINKS.signIn} className="rounded-full border border-line px-4 py-2.5 text-center font-semibold">
+                <Link
+                  href={LINKS.signIn}
+                  className="rounded-full border border-line px-4 py-2.5 text-center font-semibold"
+                >
                   Sign in
                 </Link>
-                <Link href={LINKS.signUpBuyer} className="rounded-full border border-line px-4 py-2.5 text-center font-semibold">
+                <Link
+                  href={LINKS.signUpBuyer}
+                  className="rounded-full border border-line px-4 py-2.5 text-center font-semibold"
+                >
                   Sign up to vouch
                 </Link>
               </div>

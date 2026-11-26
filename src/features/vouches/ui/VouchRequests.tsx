@@ -1,4 +1,5 @@
 import { VouchRequestCard } from "./VouchRequestCard";
+import { VoucherTermsNotice } from "@/src/features/legal/VoucherTermsNotice";
 
 type VouchRequestStatus = "PENDING" | "ACCEPTED" | "DECLINED";
 
@@ -35,6 +36,8 @@ export function VouchRequests({
           <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-ink">
             Vouch requests
           </h2>
+
+          {requests.length > 0 && <VoucherTermsNotice className="mt-1.5" />}
         </div>
 
         {requests.length > 0 && (

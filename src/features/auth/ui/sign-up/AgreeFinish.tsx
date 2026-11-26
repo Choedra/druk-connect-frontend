@@ -4,13 +4,19 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button, StepHeading, cn } from "../Primitives";
 import { GUIDELINES } from "../../constants/onboarding";
+import { termsHref } from "@/src/features/legal/terms";
 
 interface AgreeFinishProps {
   onFinish?: () => void;
   isLoading?: boolean;
+  role?: "BUYER" | "LISTER";
 }
 
-export function AgreeFinish({ onFinish, isLoading = false }: AgreeFinishProps) {
+export function AgreeFinish({
+  onFinish,
+  isLoading = false,
+  role,
+}: AgreeFinishProps) {
   const [guidelinesAccepted, setGuidelinesAccepted] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
@@ -69,7 +75,8 @@ export function AgreeFinish({ onFinish, isLoading = false }: AgreeFinishProps) {
         >
           I agree to the{" "}
           <Link
-            href="/terms"
+            href={termsHref(role === "LISTER" ? "listers" : "users")}
+            target="_blank"
             className="font-medium text-ink underline decoration-line-strong underline-offset-[3px] transition hover:decoration-ink"
           >
             terms
@@ -81,9 +88,9 @@ export function AgreeFinish({ onFinish, isLoading = false }: AgreeFinishProps) {
           >
             privacy policy
           </Link>
-          , and I understand Bhutanese Marketplace is a listing platform only — it
-          doesn&apos;t verify, inspect or insure any service, and arrangements
-          are made between members directly.
+          , and I understand Bhutanese Marketplace is a listing platform only —
+          it doesn&apos;t verify, inspect or insure any service, and
+          arrangements are made between members directly.
         </Consent>
       </div>
 

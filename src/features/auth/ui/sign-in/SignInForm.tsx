@@ -15,6 +15,7 @@ import {
   inputRest,
   Button,
 } from "../Primitives";
+import { LegalNotice } from "../LegalNotice";
 
 interface SignInFormProps {
   onSubmit: (data: { email: string; password: string }) => void;
@@ -168,14 +169,21 @@ export function SignInForm({
             {isLoading ? "Signing in" : "Sign in"}
           </Button>
 
+          <LegalNotice />
+
           <p className="mt-5 text-center text-[13.5px] text-faint">
             Don&apos;t have enough vouch?{" "}
-            <Link href="/auth/vouch-recovery" className="font-medium text-ink underline underline-offset-4">Click here.</Link>
+            <Link
+              href="/auth/vouch-recovery"
+              className="font-medium text-ink underline underline-offset-4"
+            >
+              Click here.
+            </Link>
           </p>
           <p className="mt-5 text-center text-[13.5px] text-faint">
             New to Bhutanese Marketplace?{" "}
             <Link
-              href="/signup"
+              href="/auth/signup?role=BUYER"
               className="font-medium text-ink underline decoration-line-strong underline-offset-[3px] transition hover:decoration-ink"
             >
               Create an account
