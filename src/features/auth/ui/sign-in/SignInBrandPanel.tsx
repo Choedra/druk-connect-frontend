@@ -1,7 +1,6 @@
 "use client";
 
 import { Users } from "lucide-react";
-import { BrandMark } from "../Primitives";
 
 const MEMBERS = [
   { name: "Pema Choden", initials: "PC" },
@@ -20,8 +19,6 @@ export function SignInBrandPanel() {
       {/* Top */}
       <div className="relative">
         <div className="flex items-center gap-2.5">
-          <BrandMark size={25} onDark />
-
           <span className="text-[19px] font-extrabold leading-none tracking-tight">
             Bhutanese Marketplace
           </span>

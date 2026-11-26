@@ -7,7 +7,6 @@ import Link from "next/link";
 
 import { SignInForm } from "./ui/sign-in/SignInForm";
 import { SignInBrandPanel } from "./ui/sign-in/SignInBrandPanel";
-import { BrandMark } from "./ui/Primitives";
 import { useLogin } from "./hooks/useLogin";
 import { useAuthStore } from "./store/authStore";
 import { reviewReturnPath } from "@/src/shared/routes/reviewReturnPath";
@@ -16,7 +15,9 @@ import { getDashboardRoute } from "@/src/shared/routes/getDashboardRoute";
 export default function SignInPage({ redirectTo }: { redirectTo?: string }) {
   const router = useRouter();
 
-  const completionNotice = useVouchRecoveryStore((state) => state.completionNotice);
+  const completionNotice = useVouchRecoveryStore(
+    (state) => state.completionNotice,
+  );
 
   const [serverError, setServerError] = useState("");
 
@@ -41,7 +42,11 @@ export default function SignInPage({ redirectTo }: { redirectTo?: string }) {
             setServerError(response.message);
             return;
           }
-          if (response.loginStatus !== "AUTHENTICATED" || !response.tokens?.accessToken || !response.tokens?.refreshToken) {
+          if (
+            response.loginStatus !== "AUTHENTICATED" ||
+            !response.tokens?.accessToken ||
+            !response.tokens?.refreshToken
+          ) {
             useAuthStore.getState().clearSession();
             setServerError("Unable to sign in: invalid login response.");
             return;
@@ -49,7 +54,12 @@ export default function SignInPage({ redirectTo }: { redirectTo?: string }) {
           useVouchRecoveryStore.getState().clear();
           setSession(response.tokens);
 
-          router.push(response.tokens.user.accessType === "BUYER" ? reviewReturnPath(redirectTo) || getDashboardRoute(response.tokens.user) : getDashboardRoute(response.tokens.user));
+          router.push(
+            response.tokens.user.accessType === "BUYER"
+              ? reviewReturnPath(redirectTo) ||
+                  getDashboardRoute(response.tokens.user)
+              : getDashboardRoute(response.tokens.user),
+          );
         },
 
         onError: (error) => {
@@ -68,23 +78,35 @@ export default function SignInPage({ redirectTo }: { redirectTo?: string }) {
       <section className="flex min-h-screen min-w-0 flex-1 flex-col lg:ml-[41%]">
         {/* Mobile brand bar (the side panel is hidden below lg) */}
         <header className="border-b border-line bg-background/85 px-6 py-4 backdrop-blur-md lg:hidden">
-          <Link href="/" aria-label="Bhutanese Marketplace home" className="inline-flex items-center gap-2.5 text-ink">
-            <BrandMark size={22} />
-            <span className="text-[18px] font-extrabold leading-none tracking-tight">Bhutanese Marketplace</span>
+          <Link
+            href="/"
+            aria-label="Bhutanese Marketplace home"
+            className="inline-flex items-center gap-2.5 text-ink"
+          >
+            <span className="text-[18px] font-extrabold leading-none tracking-tight">
+              Bhutanese Marketplace
+            </span>
           </Link>
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto">
           <div className="flex min-h-full justify-center px-6 pb-16 pt-8 sm:px-10 lg:px-12 lg:py-12">
             <div className="w-full max-w-110 lg:my-auto">
-              {reviewReturnPath(redirectTo)?.startsWith("/buyer-dashboard/services/") && (
+              {reviewReturnPath(redirectTo)?.startsWith(
+                "/buyer-dashboard/services/",
+              ) && (
                 <p className="mb-6 rounded-lg bg-brand-tint p-4 text-sm text-brand">
-                  Sign in with the invited Buyer account to review this service. We’ll return you to the review form after login.
+                  Sign in with the invited Buyer account to review this service.
+                  We’ll return you to the review form after login.
                 </p>
               )}
               {completionNotice && (
-                <p role="status" className="mb-6 rounded-lg bg-brand-tint p-4 text-brand">
-                  You have now met the minimum required vouches. Please sign in to restore full access.
+                <p
+                  role="status"
+                  className="mb-6 rounded-lg bg-brand-tint p-4 text-brand"
+                >
+                  You have now met the minimum required vouches. Please sign in
+                  to restore full access.
                 </p>
               )}
               <SignInForm

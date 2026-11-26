@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { BrandMark } from "../Primitives";
 import { SignupSteps } from "./SignupSteps";
 
 interface AuthHeaderProps {
@@ -17,8 +16,6 @@ export function AuthHeader({ step }: AuthHeaderProps) {
           className="flex items-center gap-2.5 rounded-lg text-ink"
           aria-label="Bhutanese Marketplace home"
         >
-          <BrandMark size={22} />
-
           <span className="text-[18px] font-extrabold leading-none tracking-tight">
             Bhutanese Marketplace
           </span>

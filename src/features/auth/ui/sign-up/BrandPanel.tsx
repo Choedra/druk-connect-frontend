@@ -2,7 +2,7 @@
 
 import { Check, Clock, Mail } from "lucide-react";
 
-import { BrandMark, cn, initialsOf } from "../Primitives";
+import { cn, initialsOf } from "../Primitives";
 import { SignupSteps } from "./SignupSteps";
 
 type SignupRole = "LISTER" | "BUYER";
@@ -71,8 +71,6 @@ export function BrandPanel({
       <div className="relative">
         <div className="mb-4 flex items-center justify-between gap-5">
           <span className="flex items-center gap-2.5">
-            <BrandMark size={25} onDark />
-
             <span className="text-[19px] font-extrabold leading-none tracking-tight">
               Bhutanese Marketplace
             </span>
@@ -300,8 +298,8 @@ function BuyerFinishPreview() {
             <p className="text-[14px] font-medium">Your account is ready</p>
 
             <p className="mt-1 text-[12.5px] leading-5 text-panel-muted">
-              Review the community guidelines and finish creating your
-              Bhutanese Marketplace account.
+              Review the community guidelines and finish creating your Bhutanese
+              Marketplace account.
             </p>
           </div>
         </div>
