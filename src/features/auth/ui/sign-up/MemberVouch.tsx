@@ -80,10 +80,6 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
   );
 
   const handleAskToVouch = (member: VouchUserSearchResponse) => {
-    console.log("=== VOUCH REQUEST DEBUG ===");
-    console.log("Selected member:", member);
-    console.log("Selected member ID:", member.userId);
-    console.log("Lister user ID:", userId);
     if (!userId) {
       return;
     }
@@ -92,7 +88,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
       (item) => item.userId === member.userId,
     );
 
-    if (alreadyPending || pending.length >= requiredVouches || requirementMet) {
+    if (alreadyPending || isRequestingVouch) {
       return;
     }
 
@@ -108,8 +104,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
         onSuccess: () => {
           setPending((current) => {
             if (
-              current.some((item) => item.userId === member.userId) ||
-              current.length >= requiredVouches
+              current.some((item) => item.userId === member.userId)
             ) {
               return current;
             }
@@ -123,19 +118,6 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
           refetchVouchCount();
         },
       },
-    );
-  };
-
-  /**
-   * Remove a locally pending request.
-   *
-   * This currently only changes the UI.
-   * Once the real request API is connected,
-   * this should call the backend instead.
-   */
-  const handleWithdraw = (memberId: string) => {
-    setPending((current) =>
-      current.filter((member) => member.userId !== memberId),
     );
   };
 
@@ -185,8 +167,8 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
     <div className="animate-step">
       {/* Heading */}
       <StepHeading
-        title="Two members vouch for you"
-        description="Posting a listing needs two vouches from members who already know you. Ask people you trust and we'll keep your progress updated."
+        title="Build your community vouches"
+        description="Posting a listing needs at least two vouches from members who know you. You can request more than two to build your community reputation."
       />
 
       {/* ─────────────────────────────────────────
@@ -200,7 +182,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
             </p>
 
             <p className="mt-1 text-[12.5px] text-muted">
-              Two community members need to vouch for you.
+              At least two community members need to vouch for you.
             </p>
           </div>
 
@@ -211,7 +193,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
                 requirementMet ? "text-jade" : "text-ink",
               )}
             >
-              {activeVouches}/{requiredVouches}
+              {activeVouches} received · {requiredVouches} minimum
             </span>
           )}
         </div>
@@ -258,7 +240,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
         {requirementMet && (
           <p className="mt-3 flex items-center gap-1.5 text-[12px] font-medium text-jade">
             <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-            Vouch requirement completed
+            Minimum vouch requirement completed. You can ask more members to vouch.
           </p>
         )}
       </section>
@@ -384,9 +366,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
                   );
 
                   const cannotRequest =
-                    alreadyPending ||
-                    pending.length >= requiredVouches ||
-                    requirementMet;
+                    alreadyPending || isRequestingVouch;
 
                   return (
                     <li

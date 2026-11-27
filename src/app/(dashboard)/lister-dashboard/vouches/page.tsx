@@ -55,7 +55,7 @@ function ListerVouches({ userId }: { userId: string }) {
     <section className={panel}>
       <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand">Build your reputation</p>
       <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-ink">Ask someone to vouch for you</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Search for a Buyer who knows you by name or shared email. Private email addresses cannot be searched.</p>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Two vouches is the minimum, not a limit. Keep asking additional Buyers who know you to vouch. Search by name or shared email; private email addresses cannot be searched.</p>
       <label className="relative mt-6 block max-w-2xl"><span className="sr-only">Search community members</span><Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" /><input type="search" value={search} maxLength={100} onChange={event => { setSearch(event.target.value); send.reset(); }} placeholder="Search by name or shared email…" className="h-11 w-full rounded-md border border-line bg-background pl-10 pr-4 text-sm text-ink outline-none focus:border-brand" /></label>
       {search.trim().length === 1 && <p className="mt-2 text-xs text-muted">Enter at least two characters.</p>}
       {query.length >= 2 && search.trim() === query && <div className="mt-5 max-w-2xl">
@@ -85,11 +85,11 @@ function ListerVouches({ userId }: { userId: string }) {
       </div>}
     </section>
 
-    <section><SectionHeading eyebrow="Your requests" title="Vouch requests" />
+    <section><SectionHeading eyebrow="Requests and accepted vouches" title="Vouch activity" />
       <ErrorNotice error={requests.error} retry={() => void requests.refetch()} />
       <div className="mt-5 border border-line bg-surface">
         {requests.isPending && <p role="status" className="p-6 text-sm text-muted">Loading your requests…</p>}
-        {requests.data?.items.map(request => <div key={request.requestId} className="flex flex-wrap items-center justify-between gap-4 border-b border-line p-5 last:border-0"><div className="flex items-center gap-3"><ProfileAvatar name={request.memberName} imageUrl={request.profileImageUrl} className="h-10 w-10 text-sm" /><div><p className="text-sm font-semibold text-ink">{request.memberName}</p><p className="mt-1 text-xs text-muted">Requested {date(request.requestedAt)}</p></div></div><span className={`rounded-md px-3 py-1.5 text-xs font-semibold ${request.status === "ACCEPTED" ? "bg-jade-tint text-jade" : request.status === "DECLINED" ? "bg-danger-tint text-danger" : "bg-background text-muted"}`}>{request.status.toLowerCase()}</span></div>)}
+        {requests.data?.items.map(request => <div key={request.requestId} className="flex flex-wrap items-center justify-between gap-4 border-b border-line p-5 last:border-0"><div className="flex items-center gap-3"><ProfileAvatar name={request.memberName} imageUrl={request.profileImageUrl} className="h-10 w-10 text-sm" /><div><p className="text-sm font-semibold text-ink">{request.memberName}</p><p className="mt-1 text-xs text-muted">{request.status === "ACCEPTED" ? "Vouched" : "Requested"} {date(request.respondedAt || request.requestedAt)}</p></div></div><span className={`rounded-md px-3 py-1.5 text-xs font-semibold ${request.status === "ACCEPTED" ? "bg-jade-tint text-jade" : request.status === "DECLINED" ? "bg-danger-tint text-danger" : "bg-background text-muted"}`}>{request.status.toLowerCase()}</span></div>)}
         {requests.data?.items.length === 0 && <p className="p-8 text-center text-sm text-muted">No requests yet. Search above to ask someone you know.</p>}
       </div>
       {requests.data && <Pagination data={requests.data} onPage={setRequestsPage} />}

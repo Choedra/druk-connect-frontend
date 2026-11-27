@@ -1,13 +1,16 @@
 import { IncomingVouchRequests } from "@/src/features/buyer-dashboard/ui/IncomingVouchRequests";
+import { OfferVouchPanel } from "@/src/features/buyer-dashboard/ui/OfferVouchPanel";
 import { PageHeader } from "@/src/shared/dashboard/PageHeader";
 
 export default function RequestsPage() {
   return (
-    <div>
+    <div className="space-y-6">
       <PageHeader
         title="Vouch requests"
-        description="Review requests from members who would like you to vouch for them."
+        description="Respond to vouch requests or find a lister you know and offer your vouch."
       />
+
+      <OfferVouchPanel />
 
       <section aria-label="Vouch requests">
         <IncomingVouchRequests />
