@@ -131,19 +131,14 @@ export function ServiceAvailedHistory() {
                 !record.alreadyReviewed && (
                   <button
                     type="button"
-                    disabled={
-                      invitation.isPending ||
-                      requested.includes(record.availmentId)
-                    }
+                    disabled={invitation.isPending}
                     onClick={() => invitation.mutate(record)}
                     className="rounded-md bg-brand px-4 py-2 text-sm text-white disabled:opacity-50"
                   >
-                    {requested.includes(record.availmentId)
-                      ? "Review requested"
-                      : invitation.isPending &&
-                          invitation.variables?.availmentId ===
-                            record.availmentId
-                        ? "Sending…"
+                    {invitation.isPending && invitation.variables?.availmentId === record.availmentId
+                      ? "Sending…"
+                      : requested.includes(record.availmentId)
+                        ? "Send review reminder"
                         : "Request Review"}
                   </button>
                 )}

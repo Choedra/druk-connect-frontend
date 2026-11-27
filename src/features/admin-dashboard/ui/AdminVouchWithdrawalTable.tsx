@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 import type {
   ModerateVouchWithdrawalAction,
   PendingVouchWithdrawal,
 } from "../types/vouchWithdrawal";
+import { ListerWithdrawalHistoryPanel } from "./ListerWithdrawalHistoryPanel";
 import ModerateVouchWithdrawalModal from "./ModerateVouchWithdrawalModal";
 
 type AdminVouchWithdrawalTableProps = {
@@ -25,6 +26,7 @@ export default function AdminVouchWithdrawalTable({
   error,
   onModerate,
 }: AdminVouchWithdrawalTableProps) {
+  const [historyRequestId, setHistoryRequestId] = useState<string | null>(null);
   const [selectedRequest, setSelectedRequest] =
     useState<PendingVouchWithdrawal | null>(null);
 
@@ -84,12 +86,16 @@ export default function AdminVouchWithdrawalTable({
 
             <tbody className="divide-y divide-line">
               {requests.map((request) => (
+                <Fragment key={request.withdrawalRequestId}>
                 <WithdrawalRow
-                  key={request.withdrawalRequestId}
                   request={request}
                   isSubmitting={isSubmitting}
                   onReview={() => setSelectedRequest(request)}
+                  historyOpen={historyRequestId === request.withdrawalRequestId}
+                  onHistory={() => setHistoryRequestId(historyRequestId === request.withdrawalRequestId ? null : request.withdrawalRequestId)}
                 />
+                {historyRequestId === request.withdrawalRequestId && <tr><td colSpan={6} className="p-5"><ListerWithdrawalHistoryPanel key={request.listerUserId} listerId={request.listerUserId} currentRequestId={request.withdrawalRequestId} onClose={() => setHistoryRequestId(null)} /></td></tr>}
+                </Fragment>
               ))}
             </tbody>
           </table>
@@ -113,12 +119,16 @@ type WithdrawalRowProps = {
   request: PendingVouchWithdrawal;
   isSubmitting: boolean;
   onReview: () => void;
+  historyOpen: boolean;
+  onHistory: () => void;
 };
 
 function WithdrawalRow({
   request,
   isSubmitting,
   onReview,
+  historyOpen,
+  onHistory,
 }: WithdrawalRowProps) {
   return (
     <tr className="transition-colors hover:bg-canvas">
@@ -126,10 +136,10 @@ function WithdrawalRow({
         <div>
           <p className="font-medium text-ink">{request.buyerName}</p>
 
-          <p className="mt-1 text-sm text-muted">{request.buyerEmail}</p>
+          <p className="mt-1 text-sm text-muted">{request.buyerEmail || "Email private"}</p>
 
           <p className="mt-0.5 text-sm text-muted">
-            {request.buyerPhoneNumber}
+            {request.buyerPhoneNumber || "Phone number private"}
           </p>
         </div>
       </td>
@@ -137,17 +147,20 @@ function WithdrawalRow({
       <td className="px-5 py-4">
         <div>
           <p className="font-medium text-ink">{request.listerName}</p>
+          <p className="mt-2 text-xs font-medium text-sky">{request.listerRequestCount} requests · {request.listerUniqueRequesterCount} distinct people</p>
+          <button type="button" aria-expanded={historyOpen} onClick={onHistory} className="mt-2 text-xs font-semibold text-sky underline">{historyOpen ? "Hide withdrawal history" : "View withdrawal history"}</button>
 
-          <p className="mt-1 text-sm text-muted">{request.listerEmail}</p>
+          <p className="mt-1 text-sm text-muted">{request.listerEmail || "Email private"}</p>
 
           <p className="mt-0.5 text-sm text-muted">
-            {request.listerPhoneNumber}
+            {request.listerPhoneNumber || "Phone number private"}
           </p>
         </div>
       </td>
 
       <td className="max-w-[300px] px-5 py-4">
         <p className="line-clamp-3 text-sm text-muted">{request.reason}</p>
+        {request.moderatedAt && <div className="mt-3 border-t border-line pt-2"><p className="text-xs text-muted">Reviewed {formatDate(request.moderatedAt)}</p><p className="mt-1 whitespace-pre-wrap break-words text-xs text-ink">{request.adminReason || "No admin reason recorded."}</p></div>}
       </td>
 
       <td className="whitespace-nowrap px-5 py-4 text-sm text-muted">
@@ -159,14 +172,14 @@ function WithdrawalRow({
       </td>
 
       <td className="px-5 py-4 text-right">
-        <button
+        {request.status === "PENDING" ? <button
           type="button"
           onClick={onReview}
           disabled={isSubmitting}
           className="rounded-lg border border-sky/30 px-4 py-2 text-sm font-semibold text-sky transition-colors hover:bg-sky-soft disabled:cursor-not-allowed disabled:opacity-50"
         >
           Review
-        </button>
+        </button> : <span className="text-xs text-muted">Reviewed</span>}
       </td>
     </tr>
   );

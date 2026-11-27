@@ -25,8 +25,6 @@ export function RequestReviewPanel({ listingId }: { listingId: string }) {
       markAvailedAndRequestReview(
         listingId,
         buyerId,
-        buyers.data?.buyers?.find((buyer) => buyer.userId === buyerId)
-          ?.requestPending,
       ),
     onSettled: () => {
       void client.invalidateQueries({
@@ -124,20 +122,17 @@ export function RequestReviewPanel({ listingId }: { listingId: string }) {
                   type="button"
                   disabled={
                     send.isPending ||
-                    (buyer.serviceAvailed &&
-                      (buyer.requestPending || buyer.alreadyReviewed)) ||
-                    (send.isSuccess && send.variables === buyer.userId)
+                    buyer.alreadyReviewed
                   }
                   onClick={() => send.mutate(buyer.userId)}
                   className="rounded-md bg-brand px-3 py-2 text-sm text-white disabled:opacity-50"
                 >
-                  {buyer.serviceAvailed && buyer.alreadyReviewed
-                    ? "Already reviewed"
-                    : (buyer.serviceAvailed && buyer.requestPending) ||
-                        (send.isSuccess && send.variables === buyer.userId)
-                      ? "Marked · Review requested"
-                      : send.isPending && send.variables === buyer.userId
-                        ? "Saving and sending…"
+                  {send.isPending && send.variables === buyer.userId
+                    ? "Sending…"
+                    : buyer.alreadyReviewed
+                      ? "Already reviewed"
+                      : buyer.requestPending || (send.isSuccess && send.variables === buyer.userId)
+                        ? "Send review reminder"
                         : buyer.serviceAvailed
                           ? "Request Review"
                           : "Mark as Avail"}

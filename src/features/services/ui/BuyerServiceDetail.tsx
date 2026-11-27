@@ -798,6 +798,7 @@ function VouchSummary({
                 <VouchAvatar
                   key={vouch.vouchId}
                   name={vouch.voucherName}
+                  imageUrl={vouch.profileImageUrl}
                   className={index > 0 ? "-ml-2" : ""}
                 />
               ))}
@@ -819,7 +820,7 @@ function VouchSummary({
         >
           {vouches.map((vouch) => (
             <li key={vouch.vouchId} className="flex items-center gap-2.5">
-              <VouchAvatar name={vouch.voucherName} />
+              <VouchAvatar name={vouch.voucherName} imageUrl={vouch.profileImageUrl} />
               <span className="text-xs font-medium text-ink">
                 {vouch.voucherName}
               </span>
@@ -989,21 +990,12 @@ function BookingNotice() {
 /* Small UI components                                                         */
 /* -------------------------------------------------------------------------- */
 
-function VouchAvatar({
-  name,
-  className = "",
-}: {
+function VouchAvatar({ name, imageUrl, className = "" }: {
   name: string;
+  imageUrl?: string | null;
   className?: string;
 }) {
-  return (
-    <div
-      title={name}
-      className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-jade-tint bg-surface text-[8px] font-bold text-jade ${className}`}
-    >
-      {getInitials(name)}
-    </div>
-  );
+  return <ProfileAvatar name={name} imageUrl={imageUrl} className={`h-6 w-6 text-[8px] border-2 border-jade-tint ${className}`} />;
 }
 
 function RatingSummary({
@@ -1161,15 +1153,6 @@ function getImageUrl(imageUrl: string) {
   }
 
   return `${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`;
-}
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
 }
 
 function getReviewKey(review: ListingReview, index: number) {

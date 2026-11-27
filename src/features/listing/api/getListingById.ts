@@ -7,6 +7,7 @@ export async function getListingById(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/listings/${listingId}`,
     {
       method: "GET",
+      cache: "no-store",
     },
   );
 

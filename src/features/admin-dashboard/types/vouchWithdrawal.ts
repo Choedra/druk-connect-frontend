@@ -1,3 +1,5 @@
+export type WithdrawalFilter = "ALL" | "PENDING" | "APPROVED" | "REJECTED";
+
 export type PendingVouchWithdrawal = {
   withdrawalRequestId: string;
   vouchId: string;
@@ -18,6 +20,10 @@ export type PendingVouchWithdrawal = {
 
   vouchedAt: string;
   requestedAt: string;
+  moderatedAt: string | null;
+  adminReason: string | null;
+  listerRequestCount: number;
+  listerUniqueRequesterCount: number;
 };
 
 export type PendingVouchWithdrawalsResponse = {
@@ -46,4 +52,17 @@ export type ModerateVouchWithdrawalResponse = {
   adminReason: string;
   moderatedAt: string;
   message: string;
+};
+
+export type ListerWithdrawalHistory = {
+  listerUserId: string;
+  listerName: string;
+  totalRequests: number;
+  uniqueRequesters: number;
+  pendingRequests: number;
+  approvedRequests: number;
+  rejectedRequests: number;
+  firstRequestedAt: string | null;
+  lastRequestedAt: string | null;
+  history: PendingVouchWithdrawalsResponse;
 };

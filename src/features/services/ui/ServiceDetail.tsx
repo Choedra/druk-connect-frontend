@@ -549,6 +549,7 @@ function ProviderCard({
               <VouchAvatar
                 key={vouch.vouchId}
                 name={vouch.voucherName}
+                imageUrl={vouch.profileImageUrl}
                 className={index > 0 ? "-ml-2" : ""}
               />
             ))}
@@ -609,21 +610,12 @@ function ProviderCard({
   );
 }
 
-function VouchAvatar({
-  name,
-  className = "",
-}: {
+function VouchAvatar({ name, imageUrl, className = "" }: {
   name: string;
+  imageUrl?: string | null;
   className?: string;
 }) {
-  return (
-    <div
-      title={name}
-      className={`flex h-7 w-7 items-center justify-center rounded-full border-2 border-pine-soft bg-white text-[10px] font-bold text-pine ${className}`}
-    >
-      {getInitials(name)}
-    </div>
-  );
+  return <ProfileAvatar name={name} imageUrl={imageUrl} className={`h-7 w-7 text-[10px] border-2 border-pine-soft ${className}`} />;
 }
 
 function RatingSummary({
