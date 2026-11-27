@@ -10,7 +10,7 @@ export interface VouchUserSearchResponse {
   userId: string;
   firstName: string;
   lastName: string;
-  email: string;
+  email: string | null;
   accessType: string;
 }
 

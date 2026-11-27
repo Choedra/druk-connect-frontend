@@ -24,8 +24,8 @@ export interface ReviewRecipient {
   userId: string;
   firstName: string;
   lastName: string;
-  email: string;
-  phoneNumber: string;
+  email: string | null;
+  phoneNumber: string | null;
   requestPending: boolean;
   serviceAvailed?: boolean;
   alreadyReviewed: boolean;

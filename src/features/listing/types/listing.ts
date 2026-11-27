@@ -102,11 +102,12 @@ export type ListingVouch = {
 
 export type ListingLister = {
   userId: string;
+  profileImageUrl?: string | null;
   name: string;
-  email: string;
-  emailLink: string;
-  phoneNumber: string;
-  whatsappLink: string;
+  email: string | null;
+  emailLink: string | null;
+  phoneNumber: string | null;
+  whatsappLink: string | null;
   activeVouches: number;
   vouches: ListingVouch[];
 };

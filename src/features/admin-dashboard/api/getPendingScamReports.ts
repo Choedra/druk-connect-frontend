@@ -10,13 +10,16 @@ export async function getPendingScamReports({
   status = "PENDING",
 }: GetScamReportsParams): Promise<ScamReportsResponse> {
   const params = new URLSearchParams({
-    status,
     page: String(page),
     size: String(size),
   });
 
+  if (status !== "ALL") params.set("status", status);
+  else params.set("all", "true");
+
   const response = await apiFetch(
     `/api/v1/admin/lister-scam/reports?${params.toString()}`,
+    { cache: "no-store" },
   );
 
   if (!response.ok) {

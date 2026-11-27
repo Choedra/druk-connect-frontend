@@ -1,5 +1,7 @@
 "use client";
 
+import { ProfileAvatar } from "@/src/features/profile/ProfileAvatar";
+
 import { formatAvailabilityDays } from "../../listing/utils/availability";
 
 import {
@@ -520,7 +522,7 @@ function ProviderCard({
     <div className="rounded-3xl border border-line bg-white p-6 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.25)]">
       {/* Provider */}
       <div className="flex items-center gap-3.5">
-        <ProviderAvatar name={lister.name} />
+        <ProfileAvatar name={lister.name} imageUrl={lister.profileImageUrl} className="h-14 w-14 text-base" />
 
         <div className="min-w-0">
           <h2 className="truncate text-lg font-bold">{lister.name}</h2>
@@ -603,14 +605,6 @@ function ProviderCard({
           )}
         </>
       )}
-    </div>
-  );
-}
-
-function ProviderAvatar({ name }: { name: string }) {
-  return (
-    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-sky-soft text-base font-bold text-sky">
-      {getInitials(name)}
     </div>
   );
 }

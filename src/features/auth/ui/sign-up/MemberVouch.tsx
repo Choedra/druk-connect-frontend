@@ -402,7 +402,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
                           </p>
 
                           <p className="truncate text-[12px] text-faint">
-                            {member.email}
+                            {member.email || "Email private"}
                           </p>
                         </div>
                       </div>

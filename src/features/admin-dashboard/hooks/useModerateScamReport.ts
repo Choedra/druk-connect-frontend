@@ -16,7 +16,7 @@ export function useModerateScamReport() {
 
     onSuccess: () =>
       queryClient.invalidateQueries({
-        queryKey: ["admin", "scam-reports", "PENDING"],
+        queryKey: ["admin", "scam-reports"],
       }),
   });
 }

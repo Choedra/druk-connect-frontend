@@ -1,5 +1,7 @@
 "use client";
 
+import { ProfileAvatar } from "@/src/features/profile/ProfileAvatar";
+
 import { formatAvailabilityDays } from "../../listing/utils/availability";
 
 import {
@@ -693,7 +695,7 @@ function ProviderCard({
   return (
     <div className="rounded-md border border-line bg-surface p-6">
       <div className="flex items-center gap-3.5">
-        <ProviderAvatar name={lister.name} />
+        <ProfileAvatar name={lister.name} imageUrl={lister.profileImageUrl} className="h-14 w-14 text-base" />
 
         <div className="min-w-0">
           <h2 className="font-serif text-lg font-medium text-ink">
@@ -986,14 +988,6 @@ function BookingNotice() {
 /* -------------------------------------------------------------------------- */
 /* Small UI components                                                         */
 /* -------------------------------------------------------------------------- */
-
-function ProviderAvatar({ name }: { name: string }) {
-  return (
-    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-tint text-sm font-semibold text-brand ring-2 ring-brand-tint">
-      {getInitials(name)}
-    </div>
-  );
-}
 
 function VouchAvatar({
   name,

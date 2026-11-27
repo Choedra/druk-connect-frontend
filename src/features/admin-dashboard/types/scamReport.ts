@@ -1,3 +1,5 @@
+export type ScamReportFilter = "ALL" | ScamReportStatus;
+
 export type ScamReportStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export interface ScamReport {
@@ -5,6 +7,8 @@ export interface ScamReport {
   reportedListerUserId: string;
   reportedListerName: string;
   reporterUserId: string;
+  reporterName: string;
+  reporterReportCount: number;
   sourceListingId: string;
   sourceListingTitle: string;
   reason: string;
@@ -29,7 +33,7 @@ export interface ScamReportsResponse {
 export interface GetScamReportsParams {
   page: number;
   size: number;
-  status?: ScamReportStatus;
+  status?: ScamReportFilter;
 }
 
 export type ScamModerationAction = "APPROVE" | "REJECT";
@@ -44,6 +48,8 @@ export interface ModerateScamReportResponse {
   reportedListerUserId: string;
   reportedListerName: string;
   reporterUserId: string;
+  reporterName: string;
+  reporterReportCount: number;
   sourceListingId: string;
   sourceListingTitle: string;
   reason: string;
@@ -53,4 +59,16 @@ export interface ModerateScamReportResponse {
   moderatedAt: string | null;
   moderationReason: string | null;
   message: string | null;
+}
+
+export interface ScamReporterHistoryResponse {
+  reporterUserId: string;
+  reporterName: string;
+  totalReports: number;
+  pendingReports: number;
+  approvedReports: number;
+  rejectedReports: number;
+  firstReportedAt: string | null;
+  lastReportedAt: string | null;
+  history: ScamReportsResponse;
 }
