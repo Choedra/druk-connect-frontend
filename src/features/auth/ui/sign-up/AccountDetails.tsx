@@ -345,7 +345,7 @@ export function AccountDetails({
           <p className="mt-5 text-center text-[13.5px] text-faint">
             Already a member?{" "}
             <Link
-              href="/signin"
+              href="/auth/login"
               className="font-medium text-ink underline decoration-line-strong underline-offset-[3px] transition hover:decoration-ink"
             >
               Sign in
