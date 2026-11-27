@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { ProfileAvatar } from "@/src/features/profile/ProfileAvatar";
 import { Check, Clock, Search, ShieldCheck } from "lucide-react";
 
 import {
-  Avatar,
   Button,
   Hint,
   Label,
@@ -304,7 +304,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
                 className="rounded-xl border border-line bg-surface p-3.5"
               >
                 <div className="flex items-center">
-                  <Avatar name={memberName} tone="ink" size={32} />
+                  <ProfileAvatar name={memberName} imageUrl={member.profileImageUrl} className="h-8 w-8 text-xs" />
                 </div>
 
                 <p className="mt-2.5 truncate text-[13.5px] font-medium text-ink">
@@ -394,7 +394,7 @@ export function MemberVouch({ userId, onNext }: MemberVouchProps) {
                       className="flex items-center justify-between gap-3 bg-surface px-3.5 py-3"
                     >
                       <div className="flex min-w-0 items-center gap-2.5">
-                        <Avatar name={memberName} size={32} />
+                        <ProfileAvatar name={memberName} imageUrl={member.profileImageUrl} className="h-8 w-8 text-xs" />
 
                         <div className="min-w-0">
                           <p className="truncate text-[13.5px] font-medium text-ink">

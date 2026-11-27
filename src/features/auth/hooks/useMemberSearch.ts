@@ -9,7 +9,7 @@ export function useMemberSearch(userId: string | null, query: string) {
     queryKey: ["vouch-user-search", userId, normalizedQuery],
     queryFn: () => searchVouchUsers(userId!, normalizedQuery),
     enabled: Boolean(userId) && normalizedQuery.length >= 2,
-    staleTime: 30 * 1000,
+    staleTime: 0,
     retry: 1,
   });
 

@@ -9,10 +9,10 @@ import { useModerateVouchWithdrawal } from "./hooks/useModerateVouchWithdrawal";
 import type {
   ModerateVouchWithdrawalAction,
   PendingVouchWithdrawal,
+  WithdrawalFilter,
 } from "./types/vouchWithdrawal";
 
 import AdminVouchWithdrawalTable from "./ui/AdminVouchWithdrawalTable";
-import PendingWithdrawalsEmpty from "./ui/PendingWithdrawalsEmpty";
 import PendingWithdrawalsError from "./ui/PendingWithdrawalsError";
 import PendingWithdrawalsSkeleton from "./ui/PendingWithdrawalsSkeleton";
 import { PageHeader } from "@/src/shared/dashboard/PageHeader";
@@ -21,11 +21,13 @@ const PAGE_SIZE = 10;
 
 export default function AdminVouchWithdrawalsPage() {
   const [page, setPage] = useState(1);
+  const [status, setStatus] = useState<WithdrawalFilter>("PENDING");
 
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error } = usePendingWithdrawals({
     page,
+    status,
     size: PAGE_SIZE,
   });
 
@@ -60,9 +62,9 @@ export default function AdminVouchWithdrawalsPage() {
       reason,
     });
 
-    await queryClient.invalidateQueries({
-      queryKey: ["admin-pending-withdrawals"],
-    });
+    setPage(1);
+    await queryClient.invalidateQueries({ queryKey: ["admin-pending-withdrawals"] });
+    await queryClient.invalidateQueries({ queryKey: ["admin-withdrawal-history"] });
   };
 
   return (
@@ -72,10 +74,15 @@ export default function AdminVouchWithdrawalsPage() {
         description="Review vouch withdrawal requests submitted by buyers."
       />
 
-      <PendingWithdrawalsSummary total={data?.totalElements ?? 0} />
+      <label className="flex flex-wrap items-center gap-3 text-sm font-medium text-ink">Request status
+        <select value={status} onChange={event => { setStatus(event.target.value as WithdrawalFilter); setPage(1); }} className="rounded-lg border border-line bg-white px-4 py-2.5">
+          <option value="ALL">All requests</option><option value="PENDING">Pending</option><option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option>
+        </select>
+      </label>
+      <PendingWithdrawalsSummary total={data?.totalElements ?? 0} status={status} />
 
       {requests.length === 0 ? (
-        <PendingWithdrawalsEmpty />
+        <div className="rounded-2xl border border-line bg-white p-8 text-center text-sm text-muted">No {status === "ALL" ? "withdrawal" : status.toLowerCase()} requests found. Select All requests to browse past withdrawals.</div>
       ) : (
         <AdminVouchWithdrawalTable
           requests={requests}
@@ -105,12 +112,13 @@ export default function AdminVouchWithdrawalsPage() {
 
 type PendingWithdrawalsSummaryProps = {
   total: number;
+  status: WithdrawalFilter;
 };
 
-function PendingWithdrawalsSummary({ total }: PendingWithdrawalsSummaryProps) {
+function PendingWithdrawalsSummary({ total, status }: PendingWithdrawalsSummaryProps) {
   return (
     <div className="rounded-2xl border border-line bg-white p-5">
-      <p className="text-sm text-muted">Pending withdrawals</p>
+      <p className="text-sm text-muted">{status === "ALL" ? "All withdrawal requests" : `${status[0]}${status.slice(1).toLowerCase()} withdrawals`}</p>
 
       <p className="mt-1 text-2xl font-semibold text-ink">{total}</p>
     </div>

@@ -112,15 +112,12 @@ export const getServiceAvailmentHistory = (page: number) =>
 export async function markAvailedAndRequestReview(
   listingId: string,
   buyerUserId: string,
-  requestPending = false,
 ) {
   const record = await markServiceAvailed(listingId, buyerUserId);
-  if (record.alreadyReviewed || requestPending) {
+  if (record.alreadyReviewed) {
     return {
       ...record,
-      message: record.alreadyReviewed
-        ? "Service marked as availed. This Buyer has already submitted a review."
-        : "Service marked as availed. A review invitation is already pending.",
+      message: "Service marked as availed. This Buyer has already submitted a review.",
     };
   }
   try {

@@ -94,6 +94,7 @@ export type ListingsResponse = {
 };
 
 export type ListingVouch = {
+  profileImageUrl?: string | null;
   vouchId: string;
   voucherUserId: string;
   voucherName: string;

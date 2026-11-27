@@ -12,6 +12,7 @@ export async function searchVouchUsers(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/vouch-requests/users/${userId}/search?${params.toString()}`,
     {
       method: "GET",
+      cache: "no-store",
       credentials: "include",
     },
   );
