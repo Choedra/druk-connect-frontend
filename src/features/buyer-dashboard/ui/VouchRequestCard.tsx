@@ -54,7 +54,7 @@ export default function VouchRequestCard({
             <div className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-muted">
               <Mail className="h-3.5 w-3.5 shrink-0" />
 
-              <span className="truncate">{request.requesterEmail}</span>
+              <span className="truncate">{request.requesterEmail || "Email private"}</span>
             </div>
           </div>
         </div>

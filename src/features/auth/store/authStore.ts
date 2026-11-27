@@ -17,6 +17,7 @@ interface AuthState {
   hydrated: boolean;
 
   setSession: (session: AuthSession) => void;
+  updateUser: (user: Partial<LoginUser> & { id: string }) => void;
   clearSession: () => void;
   setHydrated: (hydrated: boolean) => void;
 }
@@ -44,6 +45,8 @@ export const useAuthStore = create<AuthState>()(
           refreshTokenExpiresAt: session.refreshTokenExpiresAt,
           isAuthenticated: true,
         }),
+
+      updateUser: (user) => set((state) => state.user?.id === user.id ? { user: { ...state.user, ...user } } : {}),
 
       clearSession: () =>
         set({

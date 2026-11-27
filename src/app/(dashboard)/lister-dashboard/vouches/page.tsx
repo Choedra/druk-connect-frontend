@@ -1,457 +1,139 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Check, Search, ShieldCheck, Star, UserRound, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Eye, Mail, Phone, Search, ShieldCheck, Star, X } from "lucide-react";
 import { PageHeader } from "@/src/shared/dashboard/PageHeader";
+import { ProfileAvatar } from "@/src/features/profile/ProfileAvatar";
+import { useAuthStore } from "@/src/features/auth/store/authStore";
+import { getListerDashboard } from "@/src/features/lister-dashboard/api/getListerDashboard";
+import { createVouchRequest, getReceivedVouches, getSentVouchRequests, getVoucherProfile, searchVouchCandidates, type VouchPage } from "@/src/features/vouches/api/listerVouches";
 
-type Vouch = {
-  id: number;
-  name: string;
-  avatar: string;
-  relationship: string;
-  message: string;
-  date: string;
-  rating: number;
-  verified: boolean;
-};
-
-type Member = {
-  id: number;
-  name: string;
-  avatar: string;
-  location: string;
-  relationship: string;
-};
-
-type VouchRequest = {
-  id: number;
-  name: string;
-  avatar: string;
-  requestedAt: string;
-  status: "PENDING" | "ACCEPTED" | "DECLINED";
-};
-
-const VOUCHES: Vouch[] = [
-  {
-    id: 1,
-    name: "Pema Dorji",
-    avatar:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80",
-    relationship: "Community member",
-    message:
-      "I've known Tashi for a while and have always found him reliable and easy to deal with. His catering is also excellent.",
-    date: "2 weeks ago",
-    rating: 5,
-    verified: true,
-  },
-  {
-    id: 2,
-    name: "Karma Wangchuk",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
-    relationship: "Community member",
-    message:
-      "Very trustworthy and professional. I've used his services several times and would happily recommend him to others.",
-    date: "1 month ago",
-    rating: 5,
-    verified: true,
-  },
-  {
-    id: 3,
-    name: "Sonam Choden",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80",
-    relationship: "Community member",
-    message:
-      "Tashi is dependable and always communicates clearly. A great person to work with.",
-    date: "2 months ago",
-    rating: 5,
-    verified: true,
-  },
-  {
-    id: 4,
-    name: "Tshering Lhamo",
-    avatar:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80",
-    relationship: "Community member",
-    message:
-      "Friendly, reliable and genuinely helpful. I would definitely recommend him.",
-    date: "3 months ago",
-    rating: 4,
-    verified: true,
-  },
-];
-
-const MEMBERS: Member[] = [
-  {
-    id: 1,
-    name: "Karma Wangchuk",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
-    location: "Melbourne, VIC",
-    relationship: "Community member",
-  },
-  {
-    id: 2,
-    name: "Sonam Choden",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80",
-    location: "Brisbane, QLD",
-    relationship: "Community member",
-  },
-  {
-    id: 3,
-    name: "Pema Dorji",
-    avatar:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80",
-    location: "Sydney, NSW",
-    relationship: "Community member",
-  },
-];
-
-const VOUCH_REQUESTS: VouchRequest[] = [
-  {
-    id: 1,
-    name: "Karma Wangchuk",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
-    requestedAt: "2 days ago",
-    status: "PENDING",
-  },
-];
+const action = "inline-flex min-h-10 items-center justify-center rounded-md border border-line-strong px-4 py-2 text-xs font-semibold text-ink transition hover:border-brand hover:text-brand disabled:cursor-not-allowed disabled:opacity-50";
+const panel = "border border-line bg-surface p-6 sm:p-8";
+function date(value: string) {
+  return new Intl.DateTimeFormat("en-AU", { dateStyle: "medium" }).format(new Date(value));
+}
+function ErrorNotice({ error, retry }: { error: Error | null; retry?: () => void }) {
+  if (!error) return null;
+  return <div role="alert" className="my-4 rounded-md border border-danger/20 bg-danger-tint p-4 text-sm text-danger"><p>{error.message}</p>{retry && <button type="button" className="mt-2 underline" onClick={retry}>Try again</button>}</div>;
+}
 
 export default function VouchesPage() {
+  const userId = useAuthStore(state => state.user?.id);
+  return <div className="space-y-10">
+    <PageHeader title="Vouches" description="Build trust in the community by asking people you know to vouch for you and see who supports your account." />
+    {userId && <ListerVouches key={userId} userId={userId} />}
+  </div>;
+}
+
+function ListerVouches({ userId }: { userId: string }) {
+  const client = useQueryClient();
   const [search, setSearch] = useState("");
-  const [requestedIds, setRequestedIds] = useState<number[]>([]);
-
-  const searchResults = useMemo(() => {
-    const query = search.trim().toLowerCase();
-
-    if (!query) {
-      return [];
-    }
-
-    return MEMBERS.filter(
-      (member) =>
-        member.name.toLowerCase().includes(query) ||
-        member.location.toLowerCase().includes(query),
-    );
+  const [query, setQuery] = useState("");
+  const [message, setMessage] = useState("You know me in the community. Would you please vouch for my account?");
+  const [receivedPage, setReceivedPage] = useState(0);
+  const [requestsPage, setRequestsPage] = useState(0);
+  const [selected, setSelected] = useState<string | null>(null);
+  useEffect(() => {
+    const timer = setTimeout(() => setQuery(search.trim()), 300);
+    return () => clearTimeout(timer);
   }, [search]);
-
-  function handleRequestVouch(memberId: number) {
-    setRequestedIds((current) =>
-      current.includes(memberId) ? current : [...current, memberId],
-    );
-  }
-
-  return (
-    <div className="space-y-10">
-      <VouchesHeader />
-
-      <RequestVouch
-        search={search}
-        onSearchChange={setSearch}
-        results={searchResults}
-        requestedIds={requestedIds}
-        onRequest={handleRequestVouch}
-      />
-
-      <ReputationOverview />
-
-      <VouchRequests />
-
-      <HowVouchesWork />
-
-      <RecentVouches />
-    </div>
-  );
-}
-
-function VouchesHeader() {
-  return (
-    <PageHeader
-      title="Vouches"
-      description="Build trust in the community by asking people you know to vouch for you and see what others say about you."
-    />
-  );
-}
-
-function RequestVouch({
-  search,
-  onSearchChange,
-  results,
-  requestedIds,
-  onRequest,
-}: {
-  search: string;
-  onSearchChange: (value: string) => void;
-  results: Member[];
-  requestedIds: number[];
-  onRequest: (memberId: number) => void;
-}) {
-  return (
-    <section className="border border-line bg-surface p-6 sm:p-8">
-      <div className="max-w-2xl">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand">
-          Build your reputation
-        </p>
-
-        <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-ink">
-          Ask someone to vouch for you
-        </h2>
-
-        <p className="mt-2 text-sm leading-6 text-muted">
-          Search for someone in the community who knows you and send them a
-          request to vouch for you.
-        </p>
-      </div>
-
-      <div className="relative mt-6 max-w-2xl">
-        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
-
-        <input
-          type="search"
-          value={search}
-          onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Search by name or location..."
-          className="h-11 w-full rounded-md border border-line bg-background pl-10 pr-10 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-brand"
-        />
-
-        {search && (
-          <button
-            type="button"
-            onClick={() => onSearchChange("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-faint transition-colors hover:text-ink"
-            aria-label="Clear search"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
-      </div>
-
-      {search && (
-        <div className="mt-4 max-w-2xl border-t border-line">
-          {results.length > 0 ? (
-            results.map((member) => {
-              const requested = requestedIds.includes(member.id);
-
-              return (
-                <div
-                  key={member.id}
-                  className="flex items-center justify-between gap-4 border-b border-line py-4 last:border-b-0"
-                >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <img
-                      src={member.avatar}
-                      alt={member.name}
-                      className="h-10 w-10 shrink-0 rounded-full object-cover"
-                    />
-
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-ink">
-                        {member.name}
-                      </p>
-
-                      <p className="mt-0.5 truncate text-xs text-muted">
-                        {member.location} · {member.relationship}
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    disabled={requested}
-                    onClick={() => onRequest(member.id)}
-                    className={`shrink-0 rounded-md px-3.5 py-2 text-xs font-semibold transition-colors ${
-                      requested
-                        ? "bg-jade-tint text-jade"
-                        : "border border-line-strong text-ink hover:border-brand hover:text-brand"
-                    }`}
-                  >
-                    {requested ? "Requested" : "Ask to vouch"}
-                  </button>
-                </div>
-              );
-            })
-          ) : (
-            <div className="py-6 text-center">
-              <UserRound className="mx-auto h-5 w-5 text-faint" />
-
-              <p className="mt-2 text-sm font-medium text-ink">
-                No members found
-              </p>
-
-              <p className="mt-1 text-xs text-muted">
-                Try searching with a different name or location.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
+  const summary = useQuery({ queryKey: ["lister-vouches", userId, "summary"], queryFn: getListerDashboard, refetchInterval: 30000 });
+  const received = useQuery({ queryKey: ["lister-vouches", userId, "received", receivedPage], queryFn: () => getReceivedVouches(receivedPage), refetchInterval: 30000 });
+  const requests = useQuery({ queryKey: ["lister-vouches", userId, "requests", requestsPage], queryFn: () => getSentVouchRequests(requestsPage), refetchInterval: 30000 });
+  const members = useQuery({ queryKey: ["lister-vouches", userId, "search", query], queryFn: ({ signal }) => searchVouchCandidates(query, signal), enabled: query.length >= 2, staleTime: 0 });
+  const send = useMutation({
+    mutationFn: (targetUserId: string) => createVouchRequest(targetUserId, message.trim()),
+    onSuccess: () => {
+      setRequestsPage(0);
+      void client.invalidateQueries({ queryKey: ["lister-vouches", userId] });
+    },
+  });
+  const stats = summary.data;
+  return <>
+    <section className={panel}>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand">Build your reputation</p>
+      <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-ink">Ask someone to vouch for you</h2>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">Search for a Buyer who knows you by name or shared email. Private email addresses cannot be searched.</p>
+      <label className="relative mt-6 block max-w-2xl"><span className="sr-only">Search community members</span><Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" /><input type="search" value={search} maxLength={100} onChange={event => { setSearch(event.target.value); send.reset(); }} placeholder="Search by name or shared email…" className="h-11 w-full rounded-md border border-line bg-background pl-10 pr-4 text-sm text-ink outline-none focus:border-brand" /></label>
+      {search.trim().length === 1 && <p className="mt-2 text-xs text-muted">Enter at least two characters.</p>}
+      {query.length >= 2 && search.trim() === query && <div className="mt-5 max-w-2xl">
+        <label className="block text-sm font-medium text-ink">Your message<textarea value={message} onChange={event => setMessage(event.target.value)} maxLength={500} rows={3} className="mt-2 w-full rounded-md border border-line bg-background p-3 text-sm outline-none focus:border-brand" /></label>
+        {members.isPending && <p role="status" className="py-5 text-sm text-muted">Searching members…</p>}
+        <ErrorNotice error={members.error} retry={() => void members.refetch()} />
+        <ErrorNotice error={send.error} />
+        {send.isSuccess && <p role="status" className="mt-4 text-sm text-jade">Your vouch request was sent.</p>}
+        {members.data?.map(member => <div key={member.userId} className="flex flex-wrap items-center justify-between gap-4 border-b border-line py-4 last:border-0">
+          <div className="flex min-w-0 items-center gap-3"><ProfileAvatar name={member.name} imageUrl={member.profileImageUrl} className="h-10 w-10 text-sm" /><div className="min-w-0"><p className="font-semibold text-ink">{member.name}</p><p className="mt-1 break-all text-xs text-muted">{[member.location, member.email].filter(Boolean).join(" · ") || "Community member · Email private"}</p></div></div>
+          <button type="button" className={action} disabled={send.isPending || member.alreadyVouched || member.requestPending || !message.trim() || (send.isSuccess && send.variables === member.userId)} onClick={() => send.mutate(member.userId)}>{member.alreadyVouched ? "Already vouched" : member.requestPending || (send.isSuccess && send.variables === member.userId) ? "Requested" : send.isPending && send.variables === member.userId ? "Sending…" : "Ask to vouch"}</button>
+        </div>)}
+        {members.isSuccess && members.data.length === 0 && <p className="py-6 text-sm text-muted">No members found. Try another name or shared email.</p>}
+      </div>}
     </section>
-  );
-}
 
-function ReputationOverview() {
-  return (
-    <section className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
-      <div className="border border-line bg-panel p-6 text-panel-fg sm:p-8">
-        <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-panel-muted">
-              Community reputation
-            </p>
-
-            <div className="mt-4 flex items-end gap-3">
-              <span className="font-serif text-5xl font-medium tracking-tight">
-                4.8
-              </span>
-
-              <span className="pb-2 text-sm text-panel-muted">out of 5</span>
-            </div>
-
-            <RatingStars rating={5} />
-
-            <p className="mt-3 text-sm text-panel-muted">
-              Based on 12 reviews and 4 community vouches
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3 border-t border-panel-line pt-5 sm:border-l sm:border-t-0 sm:pl-8 sm:pt-0">
-            <div className="flex h-11 w-11 items-center justify-center rounded-md bg-jade-tint text-jade">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold">Trusted member</p>
-
-              <p className="mt-0.5 text-xs text-panel-muted">
-                Your identity and reputation matter
-              </p>
-            </div>
-          </div>
+    <section aria-label="Community reputation">
+      <ErrorNotice error={summary.error} retry={() => void summary.refetch()} />
+      {summary.isPending && <p role="status" className="text-sm text-muted">Loading your reputation…</p>}
+      {stats && <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
+        <div className="border border-line bg-panel p-6 text-panel-fg sm:p-8"><p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-panel-muted">Community reputation</p><div className="mt-4 flex items-end gap-3"><span className="font-serif text-5xl font-medium">{stats.averageRating == null ? "—" : stats.averageRating.toFixed(1)}</span><span className="pb-2 text-sm text-panel-muted">{stats.averageRating == null ? "No reviews yet" : "out of 5"}</span></div>
+          {stats.averageRating != null && <div className="mt-3 flex gap-1" aria-label={`${stats.averageRating} out of 5 stars`}>{Array.from({ length: 5 }, (_, index) => <Star key={index} aria-hidden="true" className={`h-4 w-4 ${index < Math.round(stats.averageRating) ? "fill-current text-brand" : "text-panel-muted"}`} />)}</div>}
+          <p className="mt-3 text-sm text-panel-muted">Based on {stats.approvedReviewCount} approved reviews and {stats.activeVouchCount} active community vouches</p>
+          <div className="mt-6 flex items-center gap-3 border-t border-panel-line pt-5"><ShieldCheck className="h-6 w-6" /><p className="text-sm">{stats.activeVouchCount} members currently vouch for you</p></div>
         </div>
-      </div>
-
-      <div className="border border-line bg-surface p-6 sm:p-8">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-faint">
-          Your vouches
-        </p>
-
-        <div className="mt-5 flex items-end gap-3">
-          <span className="font-serif text-4xl font-medium tracking-tight text-ink">
-            4
-          </span>
-
-          <span className="pb-1.5 text-sm text-muted">community members</span>
-        </div>
-
-        <div className="mt-5 h-2 overflow-hidden rounded-full bg-background">
-          <div className="h-full w-[80%] rounded-full bg-jade" />
-        </div>
-
-        <p className="mt-3 text-xs leading-5 text-muted">
-          You&apos;re building a strong reputation within the community.
-        </p>
-      </div>
+        <div className={panel}><p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-faint"><Eye className="h-4 w-4" />Total listing views</p><p className="mt-5 font-serif text-4xl font-medium text-ink">{stats.totalListingViews.toLocaleString()}</p><p className="mt-3 text-xs leading-5 text-muted">Total recorded views across your current listings. Repeat visits count as views; this is not a count of unique people.</p></div>
+      </div>}
     </section>
-  );
-}
 
-function VouchRequests() {
-  return (
-    <section>
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.1em] text-faint">
-          Your requests
-        </p>
-
-        <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-ink">
-          Vouch requests
-        </h2>
-      </div>
-
+    <section><SectionHeading eyebrow="Your requests" title="Vouch requests" />
+      <ErrorNotice error={requests.error} retry={() => void requests.refetch()} />
       <div className="mt-5 border border-line bg-surface">
-        {VOUCH_REQUESTS.length > 0 ? (
-          VOUCH_REQUESTS.map((request, index) => (
-            <VouchRequestRow
-              key={request.id}
-              request={request}
-              last={index === VOUCH_REQUESTS.length - 1}
-            />
-          ))
-        ) : (
-          <div className="p-8 text-center">
-            <p className="text-sm font-medium text-ink">
-              No vouch requests yet
-            </p>
-
-            <p className="mt-1 text-xs text-muted">
-              Search for someone above to ask them for a vouch.
-            </p>
-          </div>
-        )}
+        {requests.isPending && <p role="status" className="p-6 text-sm text-muted">Loading your requests…</p>}
+        {requests.data?.items.map(request => <div key={request.requestId} className="flex flex-wrap items-center justify-between gap-4 border-b border-line p-5 last:border-0"><div className="flex items-center gap-3"><ProfileAvatar name={request.memberName} imageUrl={request.profileImageUrl} className="h-10 w-10 text-sm" /><div><p className="text-sm font-semibold text-ink">{request.memberName}</p><p className="mt-1 text-xs text-muted">Requested {date(request.requestedAt)}</p></div></div><span className={`rounded-md px-3 py-1.5 text-xs font-semibold ${request.status === "ACCEPTED" ? "bg-jade-tint text-jade" : request.status === "DECLINED" ? "bg-danger-tint text-danger" : "bg-background text-muted"}`}>{request.status.toLowerCase()}</span></div>)}
+        {requests.data?.items.length === 0 && <p className="p-8 text-center text-sm text-muted">No requests yet. Search above to ask someone you know.</p>}
       </div>
+      {requests.data && <Pagination data={requests.data} onPage={setRequestsPage} />}
     </section>
-  );
-}
 
-function VouchRequestRow({
-  request,
-  last,
-}: {
-  request: VouchRequest;
-  last: boolean;
-}) {
-  return (
-    <div
-      className={`flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between ${
-        !last ? "border-b border-line" : ""
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        <img
-          src={request.avatar}
-          alt={request.name}
-          className="h-10 w-10 rounded-full object-cover"
-        />
+    <HowVouchesWork />
 
-        <div>
-          <p className="text-sm font-semibold text-ink">{request.name}</p>
-
-          <p className="mt-0.5 text-xs text-muted">
-            Requested {request.requestedAt}
-          </p>
-        </div>
+    <section><SectionHeading eyebrow="Community trust" title="Your vouches" />
+      <ErrorNotice error={received.error} retry={() => void received.refetch()} />
+      <div className="mt-5 border border-line bg-surface">
+        {received.isPending && <p role="status" className="p-6 text-sm text-muted">Loading your vouches…</p>}
+        {received.data?.items.map(vouch => <article key={vouch.vouchId} className="border-b border-line p-6 last:border-0 sm:p-7"><div className="flex flex-wrap items-center justify-between gap-4"><div className="flex items-center gap-4"><ProfileAvatar name={vouch.member.name} imageUrl={vouch.member.profileImageUrl} className="h-12 w-12 text-sm" /><div><h3 className="text-sm font-semibold text-ink">{vouch.member.name}</h3><p className="mt-1 text-xs text-muted">{vouch.member.location || "Community member"}</p><p className="mt-2 text-xs text-faint">Vouched on {date(vouch.vouchedAt)}</p></div></div><button type="button" className={action} aria-expanded={selected === vouch.member.userId} onClick={() => setSelected(selected === vouch.member.userId ? null : vouch.member.userId)}>{selected === vouch.member.userId ? "Hide profile" : "View profile"}</button></div>
+          {selected === vouch.member.userId && <VoucherDetails userId={userId} memberId={vouch.member.userId} onClose={() => setSelected(null)} />}
+        </article>)}
+        {received.data?.items.length === 0 && <p className="p-8 text-center text-sm text-muted">No active vouches yet. Accepted vouches will appear here.</p>}
       </div>
-
-      <RequestStatus status={request.status} />
-    </div>
-  );
+      {received.data && <Pagination data={received.data} onPage={page => { setSelected(null); setReceivedPage(page); }} />}
+    </section>
+  </>;
 }
 
-function RequestStatus({ status }: { status: VouchRequest["status"] }) {
-  const styles = {
-    PENDING: "bg-background text-muted",
-    ACCEPTED: "bg-jade-tint text-jade",
-    DECLINED: "bg-danger-tint text-danger",
-  };
-
-  const labels = {
-    PENDING: "Pending",
-    ACCEPTED: "Accepted",
-    DECLINED: "Declined",
-  };
-
-  return (
-    <span
-      className={`inline-flex w-fit items-center rounded-md px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] ${styles[status]}`}
-    >
-      {labels[status]}
-    </span>
-  );
+function VoucherDetails({ userId, memberId, onClose }: { userId: string; memberId: string; onClose: () => void }) {
+  const profile = useQuery({ queryKey: ["lister-vouches", userId, "profile", memberId], queryFn: () => getVoucherProfile(memberId), staleTime: 0, gcTime: 0, refetchOnMount: "always", refetchInterval: 15000 });
+  return <section aria-label="Member profile" className="mt-5 rounded-md border border-line bg-background p-5">
+    <div className="flex justify-between gap-4"><h4 className="font-semibold text-ink">Member profile</h4><button type="button" aria-label="Close member profile" onClick={onClose}><X className="h-4 w-4" /></button></div>
+    {profile.isFetching && <p role="status" className="mt-3 text-sm text-muted">Checking current profile visibility…</p>}
+    <ErrorNotice error={profile.error} retry={() => void profile.refetch()} />
+    {profile.data && !profile.isFetching && !profile.isError && <div className="mt-4 space-y-4">
+      <div className="flex items-center gap-3"><ProfileAvatar name={profile.data.name} imageUrl={profile.data.profileImageUrl} className="h-12 w-12" /><div><p className="font-semibold text-ink">{profile.data.name}</p>{profile.data.location && <p className="mt-1 text-sm text-muted">{profile.data.location}</p>}</div></div>
+      {profile.data.bio && <p className="whitespace-pre-wrap break-words text-sm leading-6 text-muted">{profile.data.bio}</p>}
+      <div className="flex items-center gap-3 text-sm"><Mail className="h-4 w-4 shrink-0 text-muted" />{profile.data.email ? <a href={`mailto:${profile.data.email}`} className="break-all text-brand underline">{profile.data.email}</a> : <span className="text-muted">Email private</span>}</div>
+      <div className="flex items-center gap-3 text-sm"><Phone className="h-4 w-4 shrink-0 text-muted" />{profile.data.phoneNumber ? <a href={`tel:${profile.data.phoneNumber}`} className="break-all text-brand underline">{profile.data.phoneNumber}</a> : <span className="text-muted">Phone number private</span>}</div>
+      <p className="border-t border-line pt-3 text-xs leading-5 text-muted">Members control their contact visibility in Settings. Private details are not shared.</p>
+    </div>}
+  </section>;
 }
 
+function Pagination({ data, onPage }: { data: VouchPage<unknown>; onPage: (page: number) => void }) {
+  if (data.totalPages <= 1) return null;
+  return <nav aria-label="Results pages" className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted"><span>Page {data.currentPage + 1} of {data.totalPages} · {data.totalElements} total</span><div className="flex gap-2"><button type="button" className={action} disabled={!data.hasPrevious} onClick={() => onPage(data.currentPage - 1)}>Previous</button><button type="button" className={action} disabled={!data.hasNext} onClick={() => onPage(data.currentPage + 1)}>Next</button></div></nav>;
+}
+function SectionHeading({ eyebrow, title }: { eyebrow: string; title: string }) {
+  return <div><p className="text-xs font-semibold uppercase tracking-[0.1em] text-faint">{eyebrow}</p><h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-ink">{title}</h2></div>;
+}
 function HowVouchesWork() {
   return (
     <section className="border border-line bg-surface p-6 sm:p-8">
@@ -494,101 +176,6 @@ function HowVouchesWork() {
   );
 }
 
-function RecentVouches() {
-  return (
-    <section>
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.1em] text-faint">
-            Community feedback
-          </p>
-
-          <h2 className="mt-2 font-serif text-2xl font-medium tracking-tight text-ink">
-            Recent vouches
-          </h2>
-        </div>
-
-        <span className="text-xs text-muted">{VOUCHES.length} shown</span>
-      </div>
-
-      <div className="mt-5 border border-line bg-surface">
-        {VOUCHES.map((vouch, index) => (
-          <VouchCard
-            key={vouch.id}
-            vouch={vouch}
-            last={index === VOUCHES.length - 1}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function VouchCard({ vouch, last }: { vouch: Vouch; last: boolean }) {
-  return (
-    <article className={`p-6 sm:p-7 ${!last ? "border-b border-line" : ""}`}>
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-        <div className="flex items-start gap-4">
-          <img
-            src={vouch.avatar}
-            alt={vouch.name}
-            className="h-11 w-11 shrink-0 rounded-full object-cover"
-          />
-
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-ink">{vouch.name}</h3>
-
-              {vouch.verified && (
-                <span
-                  className="flex h-4 w-4 items-center justify-center rounded-full bg-jade-tint text-jade"
-                  title="Verified member"
-                >
-                  <Check className="h-2.5 w-2.5" />
-                </span>
-              )}
-            </div>
-
-            <p className="mt-0.5 text-xs text-muted">{vouch.relationship}</p>
-          </div>
-        </div>
-
-        <div className="flex-1 sm:pl-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <RatingStars rating={vouch.rating} size="small" />
-
-            <span className="text-[10px] text-faint">{vouch.date}</span>
-          </div>
-
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-muted">
-            &ldquo;{vouch.message}&rdquo;
-          </p>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function RatingStars({
-  rating,
-  size = "default",
-}: {
-  rating: number;
-  size?: "default" | "small";
-}) {
-  return (
-    <div className="flex items-center gap-1">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <Star
-          key={index}
-          className={`${size === "small" ? "h-3.5 w-3.5" : "h-4 w-4"} ${
-            index < rating ? "fill-current text-brand" : "text-line-strong"
-          }`}
-        />
-      ))}
-    </div>
-  );
-}
 
 function VouchStep({
   number,

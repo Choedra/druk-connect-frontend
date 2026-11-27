@@ -49,12 +49,12 @@ export default function VouchCard({ vouch, onWithdraw }: VouchCardProps) {
       <div className="mt-5 space-y-3 rounded-md bg-background p-4">
         <div className="flex min-w-0 items-center gap-3 text-sm text-muted">
           <Mail aria-hidden="true" className="h-4 w-4 shrink-0 text-muted" />
-          <span className="truncate">{vouch.listerEmail}</span>
+          <span className="truncate">{vouch.listerEmail || "Email private"}</span>
         </div>
 
         <div className="flex items-center gap-3 text-sm text-muted">
           <Phone aria-hidden="true" className="h-4 w-4 shrink-0 text-muted" />
-          <span>{vouch.listerPhoneNumber}</span>
+          <span>{vouch.listerPhoneNumber || "Phone number private"}</span>
         </div>
       </div>
 

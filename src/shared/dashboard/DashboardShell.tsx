@@ -6,6 +6,7 @@ import { useState } from "react";
 import { LogOut, Menu, Search, X, type LucideIcon } from "lucide-react";
 
 import { useAuthStore } from "@/src/features/auth/store/authStore";
+import { ProfileAvatar } from "@/src/features/profile/ProfileAvatar";
 import { Wordmark } from "@/src/shared/ui/Wordmark";
 import { ADMIN_DASHBOARD, BUYER_DASHBOARD, LISTER_DASHBOARD } from "./configs";
 
@@ -61,12 +62,12 @@ function useSession() {
   const user = useAuthStore((state) => state.user);
   const clearSession = useAuthStore((state) => state.clearSession);
   const name = [user?.firstName, user?.lastName].filter(Boolean).join(" ") || "Your account";
-  const initial = user?.firstName?.charAt(0).toUpperCase() || "U";
+  const imageUrl = user?.profileImageUrl;
   const logout = () => {
     clearSession();
     router.replace("/");
   };
-  return { name, initial, logout };
+  return { name, imageUrl, logout };
 }
 
 function isActive(pathname: string, href: string, home: string) {
@@ -76,7 +77,7 @@ function isActive(pathname: string, href: string, home: string) {
 
 function Sidebar({ config, extra }: { config: DashboardConfig; extra?: React.ReactNode }) {
   const pathname = usePathname();
-  const { name, initial, logout } = useSession();
+  const { name, imageUrl, logout } = useSession();
 
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-line bg-white lg:flex lg:flex-col">
@@ -105,9 +106,7 @@ function Sidebar({ config, extra }: { config: DashboardConfig; extra?: React.Rea
 
         <div className="mt-auto rounded-2xl bg-canvas p-3">
           <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sky-soft text-sm font-bold text-sky">
-              {initial}
-            </div>
+            <ProfileAvatar name={name} imageUrl={imageUrl} className="h-10 w-10 text-sm" />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-ink">{name}</p>
               <p className="text-xs text-muted">{config.roleLabel}</p>
@@ -171,7 +170,7 @@ function SearchBox({ action, className = "" }: { action: string; className?: str
 function TopBar({ config, extra }: { config: DashboardConfig; extra?: React.ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const { initial, logout } = useSession();
+  const { name, imageUrl, logout } = useSession();
   const close = () => setOpen(false);
 
   return (
@@ -202,7 +201,7 @@ function TopBar({ config, extra }: { config: DashboardConfig; extra?: React.Reac
             className="grid h-10 w-10 place-items-center rounded-full bg-sky-soft text-sm font-bold text-sky transition-colors hover:bg-sky hover:text-white"
             aria-label="Open your profile"
           >
-            {initial}
+            <ProfileAvatar name={name} imageUrl={imageUrl} className="h-10 w-10 text-sm" />
           </Link>
         </div>
       </header>

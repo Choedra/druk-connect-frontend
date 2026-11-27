@@ -137,7 +137,7 @@ export default function VouchRecoveryPage() {
               {query.length >= 2 && !buyers.isFetching && buyers.data?.buyers?.length === 0 && <p>No registered Buyers found. Try another search or invite someone below.</p>}
               {query.length >= 2 && buyers.data?.buyers?.map((buyer) => (
                 <div key={buyer.userId} className="flex flex-wrap items-center justify-between gap-3 border-t border-line-strong py-3">
-                  <div><p>{buyer.firstName} {buyer.lastName}</p><p className="text-sm text-muted">{buyer.email}</p></div>
+                  <div><p>{buyer.firstName} {buyer.lastName}</p><p className="text-sm text-muted">{buyer.email || "Email private"}</p></div>
                   <Button disabled={request.isPending || buyer.alreadyVouched || buyer.requestPending || pendingBuyerIds.includes(buyer.userId)} onClick={() => { resetFeedback(); request.mutate(buyer.userId); }}>
                     {buyer.alreadyVouched ? "Already Vouched" : buyer.requestPending || pendingBuyerIds.includes(buyer.userId) ? "Request Pending" : request.isPending && request.variables === buyer.userId ? "Sending…" : "Request Vouch"}
                   </Button>

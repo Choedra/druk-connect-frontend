@@ -4,13 +4,13 @@ export type PendingVouchWithdrawal = {
 
   buyerUserId: string;
   buyerName: string;
-  buyerEmail: string;
-  buyerPhoneNumber: string;
+  buyerEmail: string | null;
+  buyerPhoneNumber: string | null;
 
   listerUserId: string;
   listerName: string;
-  listerEmail: string;
-  listerPhoneNumber: string;
+  listerEmail: string | null;
+  listerPhoneNumber: string | null;
 
   reason: string;
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
+import { ReporterHistoryPanel } from "./ui/ReporterHistoryPanel";
 import { useState, type FormEvent } from "react";
 import {
   AlertTriangle,
@@ -13,7 +15,7 @@ import {
 
 import { usePendingScamReports } from "./hooks/usePendingScamReports";
 import { useModerateScamReport } from "./hooks/useModerateScamReport";
-import type { ScamReport, ScamModerationAction } from "./types/scamReport";
+import type { ScamReport, ScamModerationAction, ScamReportFilter } from "./types/scamReport";
 import { PageHeader, buttonSecondary } from "@/src/shared/dashboard/PageHeader";
 
 function formatDate(value: string) {
@@ -31,10 +33,13 @@ function formatDate(value: string) {
 
 export default function ScamReportsPage() {
   const [page, setPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState<ScamReportFilter>("PENDING");
+  const [historyReportId, setHistoryReportId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const pageSize = 10;
 
   const { data, isPending, isError, error, refetch, isFetching } =
-    usePendingScamReports(page, pageSize);
+    usePendingScamReports(page, pageSize, statusFilter);
 
   const moderationMutation = useModerateScamReport();
 
@@ -84,6 +89,7 @@ export default function ScamReportsPage() {
         },
       });
 
+      setPage(1);
       setModerationNotice(
         result.message ??
           `Report ${
@@ -106,7 +112,7 @@ export default function ScamReportsPage() {
           title="Scam reports"
           description="Review suspicious listings reported by the community."
           actions={
-            <button type="button" onClick={() => refetch()} disabled={isFetching} className={buttonSecondary}>
+            <button type="button" onClick={() => void queryClient.invalidateQueries({ queryKey: ["admin", "scam-reports"] })} disabled={isFetching} className={buttonSecondary}>
               <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} aria-hidden="true" />
               Refresh reports
             </button>
@@ -140,13 +146,13 @@ export default function ScamReportsPage() {
         {/* Summary cards */}
         <section className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-line bg-surface p-5">
-            <p className="text-sm font-medium text-muted">Pending reports</p>
+            <p className="text-sm font-medium text-muted">{statusFilter === "ALL" ? "All reports" : `${statusFilter.charAt(0)}${statusFilter.slice(1).toLowerCase()} reports`}</p>
 
             <p className="mt-2 text-3xl font-bold text-ink">
               {isPending || isError ? "—" : (data?.totalElements ?? 0)}
             </p>
 
-            <p className="mt-1 text-xs text-muted">Reports awaiting review</p>
+            <p className="mt-1 text-xs text-muted">{statusFilter === "PENDING" ? "Reports awaiting review" : "Reports matching this status"}</p>
           </div>
 
           <div className="rounded-xl border border-line bg-surface p-5">
@@ -162,12 +168,22 @@ export default function ScamReportsPage() {
           </div>
         </section>
 
+        <label className="flex flex-wrap items-center gap-3 text-sm font-medium text-ink">
+          Report status
+          <select value={statusFilter} onChange={event => { setStatusFilter(event.target.value as ScamReportFilter); setPage(1); setHistoryReportId(null); }} className="rounded-lg border border-line bg-surface px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand/40">
+            <option value="ALL">All reports</option>
+            <option value="PENDING">Pending</option>
+            <option value="APPROVED">Approved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </label>
+
         {/* Reports list */}
         <section className="overflow-hidden rounded-xl border border-line bg-surface">
           <div className="flex flex-col gap-3 border-b border-line p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-semibold text-ink">
-                Reports awaiting review
+                {statusFilter === "PENDING" ? "Reports awaiting review" : "Scam report history"}
               </h2>
 
               <p className="mt-1 text-sm text-muted">
@@ -176,7 +192,7 @@ export default function ScamReportsPage() {
             </div>
 
             <span className="w-fit rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
-              PENDING
+              {statusFilter}
             </span>
           </div>
 
@@ -224,11 +240,11 @@ export default function ScamReportsPage() {
               <ShieldAlert className="mx-auto h-10 w-10 text-muted" />
 
               <h3 className="mt-3 font-semibold text-ink">
-                No pending reports
+                No {statusFilter === "ALL" ? "scam" : statusFilter.toLowerCase()} reports
               </h3>
 
               <p className="mt-2 text-sm text-muted">
-                There are no scam reports awaiting review.
+                There are no scam reports matching this status.
               </p>
             </div>
           )}
@@ -269,6 +285,12 @@ export default function ScamReportsPage() {
                         {report.status}
                       </span>
                     </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-background p-4">
+                      <div><p className="text-xs font-semibold uppercase tracking-wide text-muted">Reported by</p><p className="mt-1 text-sm font-semibold text-ink">{report.reporterName || "Community member"}</p><p className="mt-1 text-xs text-muted">{report.reporterReportCount ?? "—"} reports submitted across all listings</p></div>
+                      <button type="button" aria-expanded={historyReportId === report.reportId} onClick={() => setHistoryReportId(historyReportId === report.reportId ? null : report.reportId)} className={buttonSecondary}>{historyReportId === report.reportId ? "Hide reporter history" : "View reporter history"}</button>
+                    </div>
+                    {historyReportId === report.reportId && <ReporterHistoryPanel key={report.reporterUserId} reporterId={report.reporterUserId} currentReportId={report.reportId} onClose={() => setHistoryReportId(null)} />}
 
                     {/* Reason and date */}
                     <div className="grid gap-5 md:grid-cols-2">
@@ -334,6 +356,8 @@ export default function ScamReportsPage() {
                       </span>
                     </div>
 
+                    {report.status !== "PENDING" && <div className="rounded-lg border border-line p-4 text-sm text-muted"><p>Reviewed {report.moderatedAt ? formatDate(report.moderatedAt) : "previously"}</p><p className="mt-2 whitespace-pre-wrap break-words text-ink">{report.moderationReason || "No moderation reason recorded."}</p></div>}
+                    {report.status === "PENDING" && <>
                     {/* Moderation actions */}
                     <div
                       className="flex flex-col gap-3 border-t
@@ -363,6 +387,7 @@ export default function ScamReportsPage() {
                         Approve report
                       </button>
                     </div>
+                    </>}
                   </article>
                 ))}
               </div>

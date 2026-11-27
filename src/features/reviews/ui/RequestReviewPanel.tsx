@@ -118,7 +118,7 @@ export function RequestReviewPanel({ listingId }: { listingId: string }) {
                   {buyer.firstName} {buyer.lastName}
                 </p>
                 <p className="break-all text-sm text-muted">
-                  {buyer.email} · {buyer.phoneNumber}
+                  {[buyer.email, buyer.phoneNumber].filter(Boolean).join(" · ") || "Contact details private"}
                 </p>
                 <button
                   type="button"

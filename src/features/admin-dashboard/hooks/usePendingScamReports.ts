@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPendingScamReports } from "../api/getPendingScamReports";
 
-export function usePendingScamReports(page: number, size: number = 10) {
+import type { ScamReportFilter } from "../types/scamReport";
+
+export function usePendingScamReports(page: number, size: number = 10, status: ScamReportFilter = "PENDING") {
   return useQuery({
-    queryKey: ["admin", "scam-reports", "PENDING", page, size],
+    queryKey: ["admin", "scam-reports", status, page, size],
     queryFn: () =>
       getPendingScamReports({
-        status: "PENDING",
+        status,
         page,
         size,
       }),

@@ -3,7 +3,7 @@ export interface IncomingVouchRequest {
   requesterUserId: string;
   requesterFirstName: string;
   requesterLastName: string;
-  requesterEmail: string;
+  requesterEmail: string | null;
   message: string;
   status: string;
   requestedAt: string;
@@ -23,8 +23,8 @@ export type GivenVouch = {
   vouchId: string;
   listerUserId: string;
   listerName: string;
-  listerEmail: string;
-  listerPhoneNumber: string;
+  listerEmail: string | null;
+  listerPhoneNumber: string | null;
   vouchStatus: "ACTIVE" | "WITHDRAWN" | string;
   vouchedAt: string;
   withdrawalPending: boolean;
