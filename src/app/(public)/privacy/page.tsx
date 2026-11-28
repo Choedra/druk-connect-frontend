@@ -8,9 +8,9 @@ import type { ReactNode } from "react";
 /* ------------------------------------------------------------------ */
 
 const LAST_UPDATED = "17 November 2026";
-const PRIVACY_EMAIL = "[privacy email]";
-const HOSTING_PROVIDER = "[provider name]";
-const HOSTING_LOCATION = "[Australia / country]";
+const PRIVACY_EMAIL = "info@bhutanesemarketplace.au";
+const HOSTING_PROVIDER = "render.com";
+const HOSTING_LOCATION = "Australia";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Bhutanese Marketplace",
