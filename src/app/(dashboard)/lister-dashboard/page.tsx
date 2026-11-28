@@ -5,10 +5,17 @@ import { ArrowRight, Plus } from "lucide-react";
 
 import { ReputationCard } from "@/src/features/lister-dashboard/ui/ReputationCard";
 import { StatCard } from "@/src/features/lister-dashboard/ui/StatCard";
-import { ListingCard, ListingCardSkeleton } from "@/src/features/landing-page/ui/ListingCard";
+import {
+  ListingCard,
+  ListingCardSkeleton,
+} from "@/src/features/landing-page/ui/ListingCard";
 import { useMyListings } from "@/src/features/listing/hooks/useMyListings";
 import { useListerDashboard } from "@/src/features/lister-dashboard/hooks/useListerDashboard";
-import { PageHeader, SectionHeader, buttonPrimary } from "@/src/shared/dashboard/PageHeader";
+import {
+  PageHeader,
+  SectionHeader,
+  buttonPrimary,
+} from "@/src/shared/dashboard/PageHeader";
 import { useAuthStore } from "@/src/features/auth/store/authStore";
 
 export default function DashboardPage() {
@@ -17,11 +24,11 @@ export default function DashboardPage() {
   const myListings = useMyListings();
   const recentListings = (myListings.data?.listings ?? []).slice(0, 4);
 
-  const formatNumber = (value: number | undefined) =>
-    value === undefined ? "—" : value.toLocaleString();
+  const formatNumber = (value: number | null | undefined) =>
+    value == null ? "—" : value.toLocaleString();
 
-  const formatRating = (value: number | undefined) =>
-    value === undefined ? "—" : value.toFixed(1);
+  const formatRating = (value: number | null | undefined) =>
+    value == null ? "—" : value.toFixed(1);
 
   return (
     <div className="space-y-10">
@@ -29,13 +36,10 @@ export default function DashboardPage() {
         title={`Welcome back${firstName ? `, ${firstName}` : ""}`}
         description="Manage your listings, respond to buyers, and build your reputation in the community."
         actions={
-          <Link
-            href="/lister-dashboard/listings/new"
-            className={buttonPrimary}
-            >
+          <Link href="/lister-dashboard/listings/new" className={buttonPrimary}>
             <Plus className="h-4 w-4" />
             Create listing
-            </Link>
+          </Link>
         }
       />
 
@@ -114,9 +118,16 @@ export default function DashboardPage() {
             </ul>
           ) : recentListings.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-line bg-white px-6 py-12 text-center">
-              <p className="font-semibold text-ink">You haven&apos;t listed a service yet</p>
-              <p className="mt-1 text-sm text-muted">List one and people in your city can find you.</p>
-              <Link href="/lister-dashboard/listings/new" className={`${buttonPrimary} mt-5`}>
+              <p className="font-semibold text-ink">
+                You haven&apos;t listed a service yet
+              </p>
+              <p className="mt-1 text-sm text-muted">
+                List one and people in your city can find you.
+              </p>
+              <Link
+                href="/lister-dashboard/listings/new"
+                className={`${buttonPrimary} mt-5`}
+              >
                 <Plus className="h-4 w-4" aria-hidden="true" />
                 Create listing
               </Link>
@@ -125,7 +136,9 @@ export default function DashboardPage() {
             <ul className="grid gap-5 sm:grid-cols-2">
               {recentListings.map((listing) => (
                 <li key={listing.id}>
-                  <ListingCard listing={{ ...listing, cuisine: "", listerName: "" }} />
+                  <ListingCard
+                    listing={{ ...listing, cuisine: "", listerName: "" }}
+                  />
                 </li>
               ))}
             </ul>

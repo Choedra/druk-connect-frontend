@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 /* ------------------------------------------------------------------ */
 
 export const TERMS_LAST_UPDATED = "17 November 2026";
-export const CONTACT_EMAIL = "[email]";
+export const CONTACT_EMAIL = "info@bhutanesemarketplace.au";
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
